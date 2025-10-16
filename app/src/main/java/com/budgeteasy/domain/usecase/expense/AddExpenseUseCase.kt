@@ -1,0 +1,13 @@
+package com.budgeteasy.domain.usecase.expense
+
+import com.budgeteasy.domain.model.Expense
+import com.budgeteasy.domain.repository.IExpenseRepository
+import javax.inject.Inject
+
+class AddExpenseUseCase @Inject constructor(
+    private val expenseRepository: IExpenseRepository
+) {
+    suspend operator fun invoke(expense: Expense): Long {
+        return expenseRepository.addExpense(expense)
+    }
+}
