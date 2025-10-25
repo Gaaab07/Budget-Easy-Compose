@@ -14,7 +14,8 @@ data class LoginUiState(
     val contrasena: String = "",
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
-    val isLoginSuccessful: Boolean = false
+    val isLoginSuccessful: Boolean = false,
+    val userId: Int? = null  // 👈 AGREGADO
 )
 
 @HiltViewModel
@@ -57,7 +58,8 @@ class LoginViewModel @Inject constructor(
                     _uiState.value = currentState.copy(
                         isLoading = false,
                         isLoginSuccessful = true,
-                        errorMessage = null
+                        errorMessage = null,
+                        userId = user.id  // 👈 GUARDAR userId
                     )
                 } else {
                     _uiState.value = currentState.copy(

@@ -1,6 +1,7 @@
 package com.budgeteasy.presentation.ui.auth.login
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -22,13 +24,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.budgeteasy.presentation.theme.PrimaryGreen
-import androidx.compose.foundation.clickable
+import com.budgeteasy.presentation.ui.navigation.Screen
+
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = hiltViewModel(),
-    onLoginSuccess: () -> Unit = {},
-    onNavigateToRegister: () -> Unit = {}
+    navController: NavController,
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -109,12 +112,18 @@ fun LoginScreen(
             color = PrimaryGreen,
             modifier = Modifier
                 .padding(top = 16.dp)
-                .clickable { onNavigateToRegister() }
+                .clickable {
+                    navController.navigate(Screen.Register.route)
+                }
         )
     }
 
-    // Handle login success
-    if (uiState.isLoginSuccessful) {
-        onLoginSuccess()
+    // Handle login success - NAVEGA AL DASHBOARD
+    if (uiState.isLoginSuccessful && uiState.userId != null) {
+        LaunchedEffect(Unit) {
+            navController.navigate(Screen.Dashboard.createRoute(uiState.userId!!)) {
+                popUpTo(Screen.Login.route) { inclusive = true }
+            }
+        }
     }
 }

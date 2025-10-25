@@ -1,6 +1,7 @@
 package com.budgeteasy.presentation.ui.auth.register
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,13 +31,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.budgeteasy.presentation.theme.PrimaryGreen
+import com.budgeteasy.presentation.ui.navigation.Screen
 
 @Composable
 fun RegisterScreen(
-    viewModel: RegisterViewModel = hiltViewModel(),
-    onRegisterSuccess: () -> Unit = {},
-    onNavigateToLogin: () -> Unit = {}
+    navController: NavController,
+    viewModel: RegisterViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var expandedIdioma by remember { mutableStateOf(false) }
@@ -191,12 +194,21 @@ fun RegisterScreen(
         Text(
             text = "¿Ya tienes cuenta? Inicia sesión aquí",
             style = MaterialTheme.typography.bodyMedium,
-            color = PrimaryGreen
+            color = PrimaryGreen,
+            modifier = Modifier.clickable {
+                navController.navigate(Screen.Login.route) {
+                    popUpTo(Screen.Register.route) { inclusive = true }
+                }
+            }
         )
     }
 
-    // Handle register success
+    // Handle register success - Navega al Login
     if (uiState.isRegisterSuccessful) {
-        onRegisterSuccess()
+        LaunchedEffect(Unit) {
+            navController.navigate(Screen.Login.route) {
+                popUpTo(Screen.Register.route) { inclusive = true }
+            }
+        }
     }
 }

@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,14 +29,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.budgeteasy.presentation.theme.PrimaryGreen
 
 @Composable
 fun CreateBudgetScreen(
+    navController: NavController,
     userId: Int,
-    viewModel: CreateBudgetViewModel = hiltViewModel(),
-    onCreateSuccess: () -> Unit = {},
-    onNavigateBack: () -> Unit = {}
+    viewModel: CreateBudgetViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var expandedPeriodo by remember { mutableStateOf(false) }
@@ -152,7 +153,7 @@ fun CreateBudgetScreen(
 
         // Back Button
         Button(
-            onClick = { onNavigateBack() },
+            onClick = { navController.popBackStack() },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
@@ -162,8 +163,10 @@ fun CreateBudgetScreen(
         }
     }
 
-    // Handle create success
+    // Handle create success - Navega de vuelta al Dashboard
     if (uiState.isCreateSuccessful) {
-        onCreateSuccess()
+        LaunchedEffect(Unit) {
+            navController.popBackStack()
+        }
     }
 }

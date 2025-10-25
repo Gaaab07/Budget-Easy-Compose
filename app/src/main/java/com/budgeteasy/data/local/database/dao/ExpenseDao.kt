@@ -39,4 +39,15 @@ interface ExpenseDao {
 
     @Query("SELECT * FROM expenses ORDER BY fecha DESC LIMIT :limit")
     suspend fun getRecentExpenses(limit: Int = 10): List<ExpenseEntity>
+
+    @Query("""
+    SELECT e.* FROM expenses e
+    JOIN budgets b ON e.budgetId = b.id
+    WHERE b.userId = :userId
+    ORDER BY e.fecha DESC
+    LIMIT :limit
+""")
+    fun getRecentExpensesByUser(userId: Int, limit: Int = 10): Flow<List<ExpenseEntity>>
+
+
 }

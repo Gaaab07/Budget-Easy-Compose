@@ -11,18 +11,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.budgeteasy.presentation.theme.PrimaryGreen
+import com.budgeteasy.presentation.ui.navigation.Screen
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(
-    onSplashComplete: () -> Unit = {}
+    navController: NavController
 ) {
     LaunchedEffect(Unit) {
         delay(2000) // Mostrar splash por 2 segundos
-        onSplashComplete()
+        navController.navigate(Screen.Login.route) {
+            popUpTo(Screen.Splash.route) { inclusive = true }
+        }
     }
 
     Column(

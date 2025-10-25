@@ -1,6 +1,7 @@
 package com.budgeteasy.presentation.ui.budget.list
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,19 +30,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.budgeteasy.domain.model.Budget
 import com.budgeteasy.presentation.theme.PrimaryGreen
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import com.budgeteasy.presentation.ui.navigation.Screen
 
 @Composable
 fun BudgetListScreen(
+    navController: NavController,
     userId: Int,
-    viewModel: BudgetListViewModel = hiltViewModel(),
-    onBudgetClick: (budgetId: Int) -> Unit = {},
-    onCreateBudgetClick: () -> Unit = {},
-    onLogoutClick: () -> Unit = {}
+    viewModel: BudgetListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -69,7 +68,11 @@ fun BudgetListScreen(
             )
 
             Button(
-                onClick = { onLogoutClick() },
+                onClick = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
                 modifier = Modifier.height(40.dp)
             ) {
@@ -79,7 +82,9 @@ fun BudgetListScreen(
 
         // Create Budget Button
         Button(
-            onClick = { onCreateBudgetClick() },
+            onClick = {
+                navController.navigate(Screen.CreateBudget.createRoute(userId))
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
@@ -96,7 +101,7 @@ fun BudgetListScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(color = PrimaryGreen)
                 }
             }
             uiState.errorMessage != null -> {
@@ -129,7 +134,15 @@ fun BudgetListScreen(
                     items(uiState.budgets) { budget ->
                         BudgetCard(
                             budget = budget,
-                            onClick = { onBudgetClick(budget.id) }
+                            onClick = {
+                                navController.navigate(
+                                    Screen.ExpenseList.createRoute(
+                                        budget.id,
+                                        budget.nombre,
+                                        budget.montoPlaneado
+                                    )
+                                )
+                            }
                         )
                     }
                 }
@@ -146,7 +159,7 @@ fun BudgetCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(12.dp)
     ) {
@@ -178,14 +191,16 @@ fun BudgetCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Gastado: \$${budget.montoGastado}",
+                    text = "Gastado: S/.${String.format("%.2f", budget.montoGastado)}",
                     style = MaterialTheme.typography.bodySmall
                 )
                 Text(
-                    text = "Presupuesto: \$${budget.montoPlaneado}",
+                    text = "Presupuesto: S/.${String.format("%.2f", budget.montoPlaneado)}",
                     style = MaterialTheme.typography.bodySmall
                 )
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
 
             // Progress Bar
             val progressPercentage = if (budget.montoPlaneado > 0) {
@@ -194,20 +209,14 @@ fun BudgetCard(
                 0f
             }
 
-            Box(
+            LinearProgressIndicator(
+                progress = progressPercentage,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(8.dp)
-                    .background(MaterialTheme.colorScheme.secondary, RoundedCornerShape(4.dp))
-                    .padding(vertical = 4.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(progressPercentage)
-                        .height(8.dp)
-                        .background(PrimaryGreen, RoundedCornerShape(4.dp))
-                )
-            }
+                    .height(8.dp),
+                color = PrimaryGreen,
+                trackColor = MaterialTheme.colorScheme.surfaceVariant
+            )
 
             Spacer(modifier = Modifier.height(12.dp))
 

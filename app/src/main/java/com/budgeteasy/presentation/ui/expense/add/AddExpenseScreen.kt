@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,18 +27,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.budgeteasy.presentation.theme.PrimaryGreen
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
 @Composable
 fun AddExpenseScreen(
+    navController: NavController,
     budgetId: Int,
-    viewModel: AddExpenseViewModel = hiltViewModel(),
-    onAddSuccess: () -> Unit = {},
-    onNavigateBack: () -> Unit = {}
+    viewModel: AddExpenseViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showDatePicker by remember { mutableStateOf(false) }
@@ -140,7 +140,7 @@ fun AddExpenseScreen(
 
         // Back Button
         Button(
-            onClick = { onNavigateBack() },
+            onClick = { navController.popBackStack() },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
@@ -150,8 +150,10 @@ fun AddExpenseScreen(
         }
     }
 
-    // Handle add success
+    // Handle add success - Navega de vuelta
     if (uiState.isAddSuccessful) {
-        onAddSuccess()
+        LaunchedEffect(Unit) {
+            navController.popBackStack()
+        }
     }
 }

@@ -6,13 +6,15 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.budgeteasy.presentation.ui.splash.SplashScreen
 import com.budgeteasy.presentation.ui.auth.login.LoginScreen
 import com.budgeteasy.presentation.ui.auth.register.RegisterScreen
-import com.budgeteasy.presentation.ui.budget.create.CreateBudgetScreen
+import com.budgeteasy.presentation.ui.dashboard.DashboardScreen
 import com.budgeteasy.presentation.ui.budget.list.BudgetListScreen
+import com.budgeteasy.presentation.ui.budget.create.CreateBudgetScreen
 import com.budgeteasy.presentation.ui.expense.add.AddExpenseScreen
 import com.budgeteasy.presentation.ui.expense.list.ExpenseListScreen
-import com.budgeteasy.presentation.ui.splash.SplashScreen
+import com.budgeteasy.presentation.ui.expense.detail.ExpenseDetailScreen
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -20,89 +22,66 @@ fun NavGraph(navController: NavHostController) {
         navController = navController,
         startDestination = Screen.Splash.route
     ) {
-        // Splash Screen
+        // SPLASH
         composable(Screen.Splash.route) {
-            SplashScreen(
-                onSplashComplete = {
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(Screen.Splash.route) { inclusive = true }
-                    }
-                }
-            )
+            SplashScreen(navController = navController)
         }
 
-        // Login Screen
+        // LOGIN
         composable(Screen.Login.route) {
-            LoginScreen(
-                onLoginSuccess = {
-                    // Por ahora, usamos userId hardcodeado (1)
-                    navController.navigate(Screen.BudgetList.createRoute(1)) {
-                        popUpTo(Screen.Login.route) { inclusive = true }
-                    }
-                },
-                onNavigateToRegister = {
-                    navController.navigate(Screen.Register.route)
-                }
-            )
+            LoginScreen(navController = navController)
         }
 
-        // Register Screen
+        // REGISTER
         composable(Screen.Register.route) {
-            RegisterScreen(
-                onRegisterSuccess = {
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(Screen.Register.route) { inclusive = true }
-                    }
-                },
-                onNavigateToLogin = {
-                    navController.popBackStack()
-                }
+            RegisterScreen(navController = navController)
+        }
+
+        // DASHBOARD - Nueva pantalla principal
+        composable(
+            route = Screen.Dashboard.route,
+            arguments = listOf(
+                navArgument("userId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getInt("userId") ?: 0
+            DashboardScreen(
+                navController = navController,
+                userId = userId
             )
         }
 
-        // Budget List Screen
+        // BUDGET LIST - Lista de presupuestos
         composable(
-            Screen.BudgetList.route,
-            arguments = listOf(navArgument("userId") { type = NavType.IntType })
+            route = Screen.BudgetList.route,
+            arguments = listOf(
+                navArgument("userId") { type = NavType.IntType }
+            )
         ) { backStackEntry ->
             val userId = backStackEntry.arguments?.getInt("userId") ?: 0
             BudgetListScreen(
-                userId = userId,
-                onBudgetClick = { budgetId ->
-                    // Para este ejemplo, pasamos valores dummy para budgetName y budgetMonto
-                    navController.navigate(Screen.ExpenseList.createRoute(budgetId, "Budget", 1000.0))
-                },
-                onCreateBudgetClick = {
-                    navController.navigate(Screen.CreateBudget.createRoute(userId))
-                },
-                onLogoutClick = {
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(Screen.BudgetList.route) { inclusive = true }
-                    }
-                }
+                navController = navController,
+                userId = userId
             )
         }
 
-        // Create Budget Screen
+        // CREATE BUDGET
         composable(
-            Screen.CreateBudget.route,
-            arguments = listOf(navArgument("userId") { type = NavType.IntType })
+            route = Screen.CreateBudget.route,
+            arguments = listOf(
+                navArgument("userId") { type = NavType.IntType }
+            )
         ) { backStackEntry ->
             val userId = backStackEntry.arguments?.getInt("userId") ?: 0
             CreateBudgetScreen(
-                userId = userId,
-                onCreateSuccess = {
-                    navController.popBackStack()
-                },
-                onNavigateBack = {
-                    navController.popBackStack()
-                }
+                navController = navController,
+                userId = userId
             )
         }
 
-        // Expense List Screen
+        // EXPENSE LIST
         composable(
-            Screen.ExpenseList.route,
+            route = Screen.ExpenseList.route,
             arguments = listOf(
                 navArgument("budgetId") { type = NavType.IntType },
                 navArgument("budgetName") { type = NavType.StringType },
@@ -110,36 +89,44 @@ fun NavGraph(navController: NavHostController) {
             )
         ) { backStackEntry ->
             val budgetId = backStackEntry.arguments?.getInt("budgetId") ?: 0
-            val budgetName = backStackEntry.arguments?.getString("budgetName") ?: "Budget"
+            val budgetName = backStackEntry.arguments?.getString("budgetName") ?: ""
             val budgetMonto = backStackEntry.arguments?.getFloat("budgetMonto")?.toDouble() ?: 0.0
-
             ExpenseListScreen(
+                navController = navController,
                 budgetId = budgetId,
                 budgetName = budgetName,
-                budgetMonto = budgetMonto,
-                onAddExpenseClick = {
-                    navController.navigate(Screen.AddExpense.createRoute(budgetId))
-                },
-                onNavigateBack = {
-                    navController.popBackStack()
-                }
+                budgetMonto = budgetMonto
             )
         }
 
-        // Add Expense Screen
+        // ADD EXPENSE
         composable(
-            Screen.AddExpense.route,
-            arguments = listOf(navArgument("budgetId") { type = NavType.IntType })
+            route = Screen.AddExpense.route,
+            arguments = listOf(
+                navArgument("budgetId") { type = NavType.IntType }
+            )
         ) { backStackEntry ->
             val budgetId = backStackEntry.arguments?.getInt("budgetId") ?: 0
             AddExpenseScreen(
-                budgetId = budgetId,
-                onAddSuccess = {
-                    navController.popBackStack()
-                },
-                onNavigateBack = {
-                    navController.popBackStack()
-                }
+                navController = navController,
+                budgetId = budgetId
+            )
+        }
+
+        // EXPENSE DETAIL - Nueva pantalla para ver/editar/eliminar
+        composable(
+            route = Screen.ExpenseDetail.route,
+            arguments = listOf(
+                navArgument("expenseId") { type = NavType.IntType },
+                navArgument("budgetId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val expenseId = backStackEntry.arguments?.getInt("expenseId") ?: 0
+            val budgetId = backStackEntry.arguments?.getInt("budgetId") ?: 0
+            ExpenseDetailScreen(
+                navController = navController,
+                expenseId = expenseId,
+                budgetId = budgetId
             )
         }
     }
