@@ -56,6 +56,19 @@ class ExpenseRepository @Inject constructor(
         return expenseDao.getRecentExpenses(limit).map { it.toModel() }
     }
 
+    override fun getRecentExpensesByUser(userId: Int, limit: Int): Flow<List<Expense>> {
+        return expenseDao.getRecentExpensesByUser(userId, limit).map { entities ->
+            entities.map { it.toModel() }
+        }
+    }
+
+    // 🆕 NUEVO: Gastos recientes de UN presupuesto específico
+    override fun getRecentExpensesByBudget(budgetId: Int, limit: Int): Flow<List<Expense>> {
+        return expenseDao.getRecentExpensesByBudget(budgetId, limit).map { entities ->
+            entities.map { it.toModel() }  // ✅ CORREGIDO: toModel() en vez de toDomain()
+        }
+    }
+
     private fun Expense.toEntity(): ExpenseEntity {
         return ExpenseEntity(
             id = this.id,

@@ -13,4 +13,8 @@ interface IExpenseRepository {
     suspend fun getExpensesByDateRange(budgetId: Int, fechaInicio: Long, fechaFin: Long): List<Expense>
     suspend fun deleteExpensesByBudget(budgetId: Int)
     suspend fun getRecentExpenses(limit: Int = 10): List<Expense>
+    fun getRecentExpensesByUser(userId: Int, limit: Int = 5): Flow<List<Expense>>
+
+    // En IExpenseRepository.kt, agregar:
+    fun getRecentExpensesByBudget(budgetId: Int, limit: Int): Flow<List<Expense>>
 }

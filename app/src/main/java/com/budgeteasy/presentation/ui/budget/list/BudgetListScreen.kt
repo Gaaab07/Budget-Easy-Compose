@@ -21,6 +21,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,6 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.budgeteasy.domain.model.Budget
 import com.budgeteasy.presentation.theme.PrimaryGreen
+import com.budgeteasy.presentation.ui.navigation.BottomNavigationBar
 import com.budgeteasy.presentation.ui.navigation.Screen
 
 @Composable
@@ -47,103 +49,110 @@ fun BudgetListScreen(
         viewModel.loadBudgets(userId)
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp)
-    ) {
-        // Header
-        Row(
+    Scaffold(
+        bottomBar = {
+            BottomNavigationBar(navController = navController, userId = userId)
+        }
+    ) { padding ->
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(padding)
+                .padding(16.dp)
         ) {
-            Text(
-                text = "Mis Presupuestos",
-                style = MaterialTheme.typography.displaySmall,
-                color = PrimaryGreen
-            )
+            // Header
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Mis Presupuestos",
+                    style = MaterialTheme.typography.displaySmall,
+                    color = PrimaryGreen
+                )
 
+                Button(
+                    onClick = {
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                    modifier = Modifier.height(40.dp)
+                ) {
+                    Text("Salir")
+                }
+            }
+
+            // Create Budget Button
             Button(
                 onClick = {
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(0) { inclusive = true }
-                    }
+                    navController.navigate(Screen.CreateBudget.createRoute(userId))
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
-                modifier = Modifier.height(40.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .padding(bottom = 16.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
             ) {
-                Text("Salir")
+                Text("+ Crear Presupuesto")
             }
-        }
 
-        // Create Budget Button
-        Button(
-            onClick = {
-                navController.navigate(Screen.CreateBudget.createRoute(userId))
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-                .padding(bottom = 16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
-        ) {
-            Text("+ Crear Presupuesto")
-        }
-
-        // Content
-        when {
-            uiState.isLoading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(color = PrimaryGreen)
+            // Content
+            when {
+                uiState.isLoading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = PrimaryGreen)
+                    }
                 }
-            }
-            uiState.errorMessage != null -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = uiState.errorMessage ?: "Error desconocido",
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            }
-            uiState.budgets.isEmpty() -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "No tienes presupuestos. ¡Crea uno!",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-            }
-            else -> {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(uiState.budgets) { budget ->
-                        BudgetCard(
-                            budget = budget,
-                            onClick = {
-                                navController.navigate(
-                                    Screen.ExpenseList.createRoute(
-                                        budget.id,
-                                        budget.nombre,
-                                        budget.montoPlaneado
-                                    )
-                                )
-                            }
+                uiState.errorMessage != null -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = uiState.errorMessage ?: "Error desconocido",
+                            color = MaterialTheme.colorScheme.error
                         )
+                    }
+                }
+                uiState.budgets.isEmpty() -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "No tienes presupuestos. ¡Crea uno!",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+                else -> {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(uiState.budgets) { budget ->
+                            BudgetCard(
+                                budget = budget,
+                                onClick = {
+                                    navController.navigate(
+                                        Screen.ExpenseList.createRoute(
+                                            budget.id,
+                                            budget.nombre,
+                                            budget.montoPlaneado
+                                        )
+                                    )
+                                }
+                            )
+                        }
                     }
                 }
             }

@@ -14,6 +14,7 @@ data class AddExpenseUiState(
     val nombre: String = "",
     val monto: String = "",
     val nota: String = "",
+    val categoria: String = "Otros", // 👈 NUEVO: categoría por defecto
     val fecha: Long = System.currentTimeMillis(),
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
@@ -44,6 +45,11 @@ class AddExpenseViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(fecha = newFecha)
     }
 
+    // 👇 NUEVO: Método para cambiar categoría
+    fun onCategoriaChanged(newCategoria: String) {
+        _uiState.value = _uiState.value.copy(categoria = newCategoria)
+    }
+
     fun addExpense(budgetId: Int) {
         val currentState = _uiState.value
 
@@ -72,7 +78,8 @@ class AddExpenseViewModel @Inject constructor(
                     nombre = currentState.nombre,
                     monto = monto,
                     fecha = currentState.fecha,
-                    nota = currentState.nota
+                    nota = currentState.nota,
+                    categoria = currentState.categoria // 👈 NUEVO: incluir categoría
                 )
 
                 addExpenseUseCase(newExpense)

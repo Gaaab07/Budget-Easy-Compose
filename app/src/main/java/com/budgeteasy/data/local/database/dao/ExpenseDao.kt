@@ -1,15 +1,12 @@
 package com.budgeteasy.data.local.database.dao
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 import com.budgeteasy.data.local.database.entity.ExpenseEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ExpenseDao {
+
     @Insert
     suspend fun insertExpense(expense: ExpenseEntity): Long
 
@@ -46,8 +43,15 @@ interface ExpenseDao {
     WHERE b.userId = :userId
     ORDER BY e.fecha DESC
     LIMIT :limit
-""")
+    """)
     fun getRecentExpensesByUser(userId: Int, limit: Int = 10): Flow<List<ExpenseEntity>>
 
-
+    // 🆕 NUEVO: Query para traer gastos recientes de UN presupuesto específico
+    @Query("""
+        SELECT * FROM expenses
+        WHERE budgetId = :budgetId
+        ORDER BY fecha DESC
+        LIMIT :limit
+    """)
+    fun getRecentExpensesByBudget(budgetId: Int, limit: Int = 5): Flow<List<ExpenseEntity>>
 }

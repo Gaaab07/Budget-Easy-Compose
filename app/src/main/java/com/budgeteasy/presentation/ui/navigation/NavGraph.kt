@@ -15,6 +15,8 @@ import com.budgeteasy.presentation.ui.budget.create.CreateBudgetScreen
 import com.budgeteasy.presentation.ui.expense.add.AddExpenseScreen
 import com.budgeteasy.presentation.ui.expense.list.ExpenseListScreen
 import com.budgeteasy.presentation.ui.expense.detail.ExpenseDetailScreen
+import com.budgeteasy.presentation.ui.expense.all.AllExpensesScreen
+import com.budgeteasy.presentation.ui.profile.ProfileScreen
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -37,7 +39,7 @@ fun NavGraph(navController: NavHostController) {
             RegisterScreen(navController = navController)
         }
 
-        // DASHBOARD - Nueva pantalla principal
+        // DASHBOARD - Pantalla principal con BottomNav
         composable(
             route = Screen.Dashboard.route,
             arguments = listOf(
@@ -51,7 +53,7 @@ fun NavGraph(navController: NavHostController) {
             )
         }
 
-        // BUDGET LIST - Lista de presupuestos
+        // BUDGET LIST - Lista de presupuestos con BottomNav
         composable(
             route = Screen.BudgetList.route,
             arguments = listOf(
@@ -79,7 +81,7 @@ fun NavGraph(navController: NavHostController) {
             )
         }
 
-        // EXPENSE LIST
+        // EXPENSE LIST (gastos de un presupuesto específico)
         composable(
             route = Screen.ExpenseList.route,
             arguments = listOf(
@@ -113,7 +115,7 @@ fun NavGraph(navController: NavHostController) {
             )
         }
 
-        // EXPENSE DETAIL - Nueva pantalla para ver/editar/eliminar
+        // EXPENSE DETAIL
         composable(
             route = Screen.ExpenseDetail.route,
             arguments = listOf(
@@ -127,6 +129,34 @@ fun NavGraph(navController: NavHostController) {
                 navController = navController,
                 expenseId = expenseId,
                 budgetId = budgetId
+            )
+        }
+
+        // ALL EXPENSES - Ver todos los gastos del usuario (BottomNav)
+        composable(
+            route = Screen.AllExpenses.route,
+            arguments = listOf(
+                navArgument("userId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getInt("userId") ?: 0
+            AllExpensesScreen(
+                navController = navController,
+                userId = userId
+            )
+        }
+
+        // PROFILE - Perfil del usuario (BottomNav)
+        composable(
+            route = Screen.Profile.route,
+            arguments = listOf(
+                navArgument("userId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getInt("userId") ?: 0
+            ProfileScreen(
+                navController = navController,
+                userId = userId
             )
         }
     }
