@@ -17,10 +17,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.budgeteasy.data.preferences.AppLanguage
 import com.budgeteasy.domain.model.Expense
 import com.budgeteasy.presentation.theme.PrimaryGreen
 import com.budgeteasy.presentation.ui.navigation.BottomNavigationBar
 import com.budgeteasy.presentation.ui.navigation.Screen
+import com.budgeteasy.presentation.utils.getCurrentLanguage
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -33,6 +35,7 @@ fun AllExpensesScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val expenses by viewModel.allExpenses.collectAsState()
+    val currentLanguage = getCurrentLanguage()
 
     LaunchedEffect(Unit) {
         viewModel.loadAllExpenses(userId)
@@ -61,14 +64,20 @@ fun AllExpensesScreen(
                         .padding(24.dp)
                 ) {
                     Text(
-                        text = "Mis Gastos",
+                        text = if (currentLanguage == AppLanguage.SPANISH)
+                            "Mis Gastos"
+                        else
+                            "My Expenses",
                         style = MaterialTheme.typography.displaySmall,
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Historial completo",
+                        text = if (currentLanguage == AppLanguage.SPANISH)
+                            "Historial completo"
+                        else
+                            "Full history",
                         style = MaterialTheme.typography.bodyLarge,
                         color = Color.White.copy(alpha = 0.9f)
                     )
@@ -114,12 +123,18 @@ fun AllExpensesScreen(
                                 fontSize = 64.sp
                             )
                             Text(
-                                text = "No hay gastos registrados",
+                                text = if (currentLanguage == AppLanguage.SPANISH)
+                                    "No hay gastos registrados"
+                                else
+                                    "No expenses registered",
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Medium
                             )
                             Text(
-                                text = "Agrega gastos desde tus presupuestos",
+                                text = if (currentLanguage == AppLanguage.SPANISH)
+                                    "Agrega gastos desde tus presupuestos"
+                                else
+                                    "Add expenses from your budgets",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -146,7 +161,10 @@ fun AllExpensesScreen(
                         ) {
                             Column {
                                 Text(
-                                    text = "Total Gastado",
+                                    text = if (currentLanguage == AppLanguage.SPANISH)
+                                        "Total Gastado"
+                                    else
+                                        "Total Spent",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer
                                 )
@@ -174,6 +192,7 @@ fun AllExpensesScreen(
                         items(expenses) { expense ->
                             ExpenseItemCard(
                                 expense = expense,
+                                currentLanguage = currentLanguage,
                                 onClick = {
                                     navController.navigate(
                                         Screen.ExpenseDetail.createRoute(expense.id, expense.budgetId)
@@ -194,9 +213,14 @@ fun AllExpensesScreen(
 @Composable
 fun ExpenseItemCard(
     expense: Expense,
+    currentLanguage: AppLanguage,
     onClick: () -> Unit
 ) {
-    val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale("es", "ES"))
+    val locale = if (currentLanguage == AppLanguage.SPANISH)
+        Locale("es", "ES")
+    else
+        Locale("en", "US")
+    val dateFormat = SimpleDateFormat("dd MMM yyyy", locale)
     val categoryIcon = getCategoryIconForExpense(expense.categoria)
 
     Card(
@@ -241,7 +265,8 @@ fun ExpenseItemCard(
                     Text(
                         text = expense.nombre,
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurface // 🔥 Adaptable a dark mode
                     )
                     Text(
                         text = dateFormat.format(Date(expense.fecha)),
@@ -250,7 +275,7 @@ fun ExpenseItemCard(
                     )
                     if (expense.categoria.isNotEmpty()) {
                         Text(
-                            text = expense.categoria,
+                            text = translateCategory(expense.categoria, currentLanguage),
                             style = MaterialTheme.typography.bodySmall,
                             color = PrimaryGreen
                         )
@@ -268,17 +293,37 @@ fun ExpenseItemCard(
     }
 }
 
+// Traducir categorías
+fun translateCategory(category: String, language: AppLanguage): String {
+    if (language == AppLanguage.ENGLISH) {
+        return when (category) {
+            "Restaurantes" -> "Restaurants"
+            "Compras" -> "Shopping"
+            "Transporte" -> "Transport"
+            "Entretenimiento" -> "Entertainment"
+            "Salud" -> "Health"
+            "Educación" -> "Education"
+            "Servicios" -> "Services"
+            "Hogar" -> "Home"
+            "Otros" -> "Other"
+            else -> category
+        }
+    }
+    return category
+}
+
 // Función para obtener el icono según la categoría
 fun getCategoryIconForExpense(category: String): String {
     return when (category) {
-        "Restaurantes" -> "🍽️"
-        "Compras" -> "🛍️"
-        "Transporte" -> "🚗"
-        "Entretenimiento" -> "🎵"
-        "Salud" -> "💊"
-        "Educación" -> "📖"
-        "Servicios" -> "🔨"
-        "Hogar" -> "🏠"
+        "Restaurantes", "Restaurants" -> "🍽️"
+        "Compras", "Shopping" -> "🛍️"
+        "Transporte", "Transport" -> "🚗"
+        "Entretenimiento", "Entertainment" -> "🎵"
+        "Salud", "Health" -> "💊"
+        "Educación", "Education" -> "📖"
+        "Servicios", "Services" -> "🔨"
+        "Hogar", "Home" -> "🏠"
+        "Otros", "Other" -> "💰"
         else -> "💰"
     }
 }

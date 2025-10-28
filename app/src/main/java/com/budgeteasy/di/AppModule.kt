@@ -1,6 +1,3 @@
-// Si ya tienes un AppModule.kt, AGREGA estas líneas:
-// Si NO tienes, CREA este archivo en: di/AppModule.kt
-
 package com.budgeteasy.di
 
 import android.content.Context
@@ -17,19 +14,19 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+    // ========================================
+    // PREFERENCES MANAGERS
+    // ========================================
+
     @Provides
     @Singleton
-    fun provideThemeManager(
-        @ApplicationContext context: Context
-    ): ThemeManager {
+    fun provideThemeManager(@ApplicationContext context: Context): ThemeManager {
         return ThemeManager(context)
     }
 
     @Provides
     @Singleton
-    fun provideLanguageManager(
-        @ApplicationContext context: Context
-    ): LanguageManager {
+    fun provideLanguageManager(@ApplicationContext context: Context): LanguageManager {
         return LanguageManager(context)
     }
 }

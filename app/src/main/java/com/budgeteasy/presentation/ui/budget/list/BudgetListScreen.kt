@@ -32,10 +32,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.budgeteasy.data.preferences.AppLanguage
 import com.budgeteasy.domain.model.Budget
 import com.budgeteasy.presentation.theme.PrimaryGreen
 import com.budgeteasy.presentation.ui.navigation.BottomNavigationBar
 import com.budgeteasy.presentation.ui.navigation.Screen
+import com.budgeteasy.presentation.utils.getCurrentLanguage
 
 @Composable
 fun BudgetListScreen(
@@ -44,6 +46,7 @@ fun BudgetListScreen(
     viewModel: BudgetListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val currentLanguage = getCurrentLanguage()
 
     LaunchedEffect(Unit) {
         viewModel.loadBudgets(userId)
@@ -70,7 +73,10 @@ fun BudgetListScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Mis Presupuestos",
+                    text = if (currentLanguage == AppLanguage.SPANISH)
+                        "Mis Presupuestos"
+                    else
+                        "My Budgets",
                     style = MaterialTheme.typography.displaySmall,
                     color = PrimaryGreen
                 )
@@ -84,7 +90,7 @@ fun BudgetListScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
                     modifier = Modifier.height(40.dp)
                 ) {
-                    Text("Salir")
+                    Text(if (currentLanguage == AppLanguage.SPANISH) "Salir" else "Logout")
                 }
             }
 
@@ -99,7 +105,12 @@ fun BudgetListScreen(
                     .padding(bottom = 16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
             ) {
-                Text("+ Crear Presupuesto")
+                Text(
+                    if (currentLanguage == AppLanguage.SPANISH)
+                        "+ Crear Presupuesto"
+                    else
+                        "+ Create Budget"
+                )
             }
 
             // Content
@@ -118,7 +129,10 @@ fun BudgetListScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = uiState.errorMessage ?: "Error desconocido",
+                            text = uiState.errorMessage ?: if (currentLanguage == AppLanguage.SPANISH)
+                                "Error desconocido"
+                            else
+                                "Unknown error",
                             color = MaterialTheme.colorScheme.error
                         )
                     }
@@ -129,7 +143,10 @@ fun BudgetListScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "No tienes presupuestos. ¡Crea uno!",
+                            text = if (currentLanguage == AppLanguage.SPANISH)
+                                "No tienes presupuestos. ¡Crea uno!"
+                            else
+                                "You have no budgets. Create one!",
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }
@@ -142,6 +159,7 @@ fun BudgetListScreen(
                         items(uiState.budgets) { budget ->
                             BudgetCard(
                                 budget = budget,
+                                currentLanguage = currentLanguage,
                                 onClick = {
                                     navController.navigate(
                                         Screen.ExpenseList.createRoute(
@@ -163,6 +181,7 @@ fun BudgetListScreen(
 @Composable
 fun BudgetCard(
     budget: Budget,
+    currentLanguage: AppLanguage,
     onClick: () -> Unit = {}
 ) {
     Card(
@@ -188,8 +207,12 @@ fun BudgetCard(
 
             // Periodo
             Text(
-                text = "Período: ${budget.periodo}",
-                style = MaterialTheme.typography.bodySmall
+                text = if (currentLanguage == AppLanguage.SPANISH)
+                    "Período: ${budget.periodo}"
+                else
+                    "Period: ${budget.periodo}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant // 🔥 Color adaptable
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -200,12 +223,20 @@ fun BudgetCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Gastado: S/.${String.format("%.2f", budget.montoGastado)}",
-                    style = MaterialTheme.typography.bodySmall
+                    text = if (currentLanguage == AppLanguage.SPANISH)
+                        "Gastado: S/.${String.format("%.2f", budget.montoGastado)}"
+                    else
+                        "Spent: S/.${String.format("%.2f", budget.montoGastado)}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface // 🔥 Color adaptable
                 )
                 Text(
-                    text = "Presupuesto: S/.${String.format("%.2f", budget.montoPlaneado)}",
-                    style = MaterialTheme.typography.bodySmall
+                    text = if (currentLanguage == AppLanguage.SPANISH)
+                        "Presupuesto: S/.${String.format("%.2f", budget.montoPlaneado)}"
+                    else
+                        "Budget: S/.${String.format("%.2f", budget.montoPlaneado)}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface // 🔥 Color adaptable
                 )
             }
 
@@ -237,7 +268,12 @@ fun BudgetCard(
                     .height(40.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
             ) {
-                Text("Ver Gastos")
+                Text(
+                    if (currentLanguage == AppLanguage.SPANISH)
+                        "Ver Gastos"
+                    else
+                        "View Expenses"
+                )
             }
         }
     }

@@ -45,4 +45,7 @@ sealed class Screen(val route: String) {
     object Profile : Screen("profile/{userId}") {
         fun createRoute(userId: Int) = "profile/$userId"
     }
+    object Settings : Screen("settings") {
+        // Sin parámetros porque no necesita userId
+    }
 }

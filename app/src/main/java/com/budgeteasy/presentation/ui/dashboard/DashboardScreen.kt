@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -14,17 +13,18 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.budgeteasy.data.preferences.AppLanguage
 import com.budgeteasy.domain.model.Budget
 import com.budgeteasy.domain.model.Expense
 import com.budgeteasy.domain.model.User
 import com.budgeteasy.presentation.ui.navigation.BottomNavigationBar
 import com.budgeteasy.presentation.ui.navigation.Screen
+import com.budgeteasy.presentation.utils.getCurrentLanguage
 
 @Composable
 fun DashboardScreen(
@@ -37,8 +37,8 @@ fun DashboardScreen(
     val recentExpenses by viewModel.recentExpenses.collectAsState()
     val selectedBudget by viewModel.selectedBudget.collectAsState()
     val allBudgets by viewModel.allBudgets.collectAsState()
+    val currentLanguage = getCurrentLanguage()
 
-    // Refrescar cuando se regresa a esta pantalla
     LaunchedEffect(Unit) {
         viewModel.refreshDashboard()
     }
@@ -70,6 +70,7 @@ fun DashboardScreen(
                     user = user,
                     userId = userId,
                     navController = navController,
+                    currentLanguage = currentLanguage,
                     onRefresh = { viewModel.refreshDashboard() },
                     onBudgetSelected = { budget -> viewModel.selectBudget(budget) },
                     padding = padding
@@ -90,13 +91,16 @@ fun DashboardScreen(
                         modifier = Modifier.padding(16.dp)
                     ) {
                         Text(
-                            text = "Error: $message",
+                            text = if (currentLanguage == AppLanguage.SPANISH)
+                                "Error: $message"
+                            else
+                                "Error: $message",
                             color = MaterialTheme.colorScheme.error,
                             fontSize = 16.sp
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(onClick = { navController.popBackStack() }) {
-                            Text("Volver")
+                            Text(if (currentLanguage == AppLanguage.SPANISH) "Volver" else "Back")
                         }
                     }
                 }
@@ -113,6 +117,7 @@ private fun DashboardContent(
     user: User?,
     userId: Int,
     navController: NavController,
+    currentLanguage: AppLanguage,
     onRefresh: () -> Unit,
     onBudgetSelected: (Budget) -> Unit,
     padding: PaddingValues
@@ -123,24 +128,30 @@ private fun DashboardContent(
             .background(MaterialTheme.colorScheme.background)
             .padding(padding)
     ) {
-        // Header con usuario
+        // Header
         item {
-            DashboardHeader(user = user, userId = userId, navController = navController)
+            DashboardHeader(
+                user = user,
+                userId = userId,
+                navController = navController,
+                currentLanguage = currentLanguage
+            )
         }
 
-        // Presupuesto destacado (seleccionado)
+        // Presupuesto destacado
         if (selectedBudget != null) {
             item {
                 Spacer(modifier = Modifier.height(16.dp))
                 MainBudgetCard(
                     budget = selectedBudget,
                     allBudgets = budgets,
+                    currentLanguage = currentLanguage,
                     onBudgetSelected = onBudgetSelected
                 )
             }
         }
 
-        // Título: Gastos Recientes del presupuesto seleccionado
+        // Título: Gastos Recientes
         item {
             Spacer(modifier = Modifier.height(24.dp))
             Row(
@@ -151,7 +162,10 @@ private fun DashboardContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Gastos Recientes",
+                    text = if (currentLanguage == AppLanguage.SPANISH)
+                        "Gastos Recientes"
+                    else
+                        "Recent Expenses",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
@@ -167,11 +181,14 @@ private fun DashboardContent(
             Spacer(modifier = Modifier.height(12.dp))
         }
 
-        // Gastos recientes REALES
+        // Gastos recientes
         if (recentExpenses.isEmpty()) {
             item {
                 Text(
-                    text = "No hay gastos registrados aún",
+                    text = if (currentLanguage == AppLanguage.SPANISH)
+                        "No hay gastos registrados aún"
+                    else
+                        "No expenses registered yet",
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                     modifier = Modifier.padding(horizontal = 16.dp)
@@ -192,12 +209,11 @@ private fun DashboardContent(
             }
         }
 
-        // Botón para agregar gasto
+        // Botón agregar gasto
         item {
             Spacer(modifier = Modifier.height(24.dp))
             Button(
                 onClick = {
-                    // Usar el presupuesto SELECCIONADO, no el primero
                     val budgetToUse = selectedBudget ?: budgets.firstOrNull()
                     if (budgetToUse != null) {
                         navController.navigate(Screen.AddExpense.createRoute(budgetToUse.id))
@@ -214,12 +230,16 @@ private fun DashboardContent(
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
-                    contentDescription = "Agregar",
+                    contentDescription = null,
                     modifier = Modifier.size(20.dp),
                     tint = Color.White
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Añadir nuevo", color = Color.White, fontWeight = FontWeight.Bold)
+                Text(
+                    if (currentLanguage == AppLanguage.SPANISH) "Añadir nuevo" else "Add New",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -227,7 +247,10 @@ private fun DashboardContent(
         // Título: Mis Presupuestos
         item {
             Text(
-                text = "Mis Presupuestos",
+                text = if (currentLanguage == AppLanguage.SPANISH)
+                    "Mis Presupuestos"
+                else
+                    "My Budgets",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -240,6 +263,7 @@ private fun DashboardContent(
         items(budgets) { budget ->
             BudgetDashboardCard(
                 budget = budget,
+                currentLanguage = currentLanguage,
                 onClick = {
                     navController.navigate(
                         Screen.ExpenseList.createRoute(
@@ -252,7 +276,7 @@ private fun DashboardContent(
             )
         }
 
-        // Botón para crear presupuesto
+        // Botón crear presupuesto
         item {
             Spacer(modifier = Modifier.height(16.dp))
             Button(
@@ -270,12 +294,16 @@ private fun DashboardContent(
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
-                    contentDescription = "Agregar",
+                    contentDescription = null,
                     modifier = Modifier.size(20.dp),
                     tint = Color.White
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Añadir Presupuesto", color = Color.White, fontWeight = FontWeight.Bold)
+                Text(
+                    if (currentLanguage == AppLanguage.SPANISH) "Añadir Presupuesto" else "Add Budget",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
             }
             Spacer(modifier = Modifier.height(24.dp))
         }
@@ -286,7 +314,8 @@ private fun DashboardContent(
 private fun DashboardHeader(
     user: User?,
     userId: Int,
-    navController: NavController
+    navController: NavController,
+    currentLanguage: AppLanguage
 ) {
     Row(
         modifier = Modifier
@@ -298,13 +327,13 @@ private fun DashboardHeader(
     ) {
         Column {
             Text(
-                text = "Vacaciones",
+                text = if (currentLanguage == AppLanguage.SPANISH) "Vacaciones" else "Vacations",
                 color = Color.White,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = user?.nombre ?: "Usuario",
+                text = user?.nombre ?: if (currentLanguage == AppLanguage.SPANISH) "Usuario" else "User",
                 color = Color.White.copy(alpha = 0.8f),
                 fontSize = 12.sp
             )
@@ -336,11 +365,11 @@ private fun DashboardHeader(
 private fun MainBudgetCard(
     budget: Budget,
     allBudgets: List<Budget>,
+    currentLanguage: AppLanguage,
     onBudgetSelected: (Budget) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    // Calcular progreso REAL
     val montoGastado = budget.montoGastado
     val montoPlaneado = budget.montoPlaneado
     val montoRestante = (montoPlaneado - montoGastado).coerceAtLeast(0.0)
@@ -367,7 +396,6 @@ private fun MainBudgetCard(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            // Header con nombre del presupuesto
             Text(
                 text = budget.nombre,
                 color = Color.White,
@@ -378,9 +406,11 @@ private fun MainBudgetCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Monto planeado
             Text(
-                text = "Presupuesto Total",
+                text = if (currentLanguage == AppLanguage.SPANISH)
+                    "Presupuesto Total"
+                else
+                    "Total Budget",
                 color = Color.White.copy(alpha = 0.8f),
                 fontSize = 12.sp
             )
@@ -393,14 +423,13 @@ private fun MainBudgetCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Monto gastado
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column {
                     Text(
-                        text = "Gastado",
+                        text = if (currentLanguage == AppLanguage.SPANISH) "Gastado" else "Spent",
                         color = Color.White.copy(alpha = 0.8f),
                         fontSize = 12.sp
                     )
@@ -414,7 +443,10 @@ private fun MainBudgetCard(
 
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        text = "Disponible",
+                        text = if (currentLanguage == AppLanguage.SPANISH)
+                            "Disponible"
+                        else
+                            "Available",
                         color = Color.White.copy(alpha = 0.8f),
                         fontSize = 12.sp
                     )
@@ -429,7 +461,6 @@ private fun MainBudgetCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Barra de progreso DINÁMICA
             LinearProgressIndicator(
                 progress = progress,
                 modifier = Modifier
@@ -441,15 +472,16 @@ private fun MainBudgetCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Porcentaje usado
             Text(
-                text = "$porcentaje% del presupuesto usado",
+                text = if (currentLanguage == AppLanguage.SPANISH)
+                    "$porcentaje% del presupuesto usado"
+                else
+                    "$porcentaje% of budget used",
                 color = Color.White.copy(alpha = 0.9f),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium
             )
 
-            // Hint si hay múltiples presupuestos
             if (allBudgets.size > 1) {
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(
@@ -458,7 +490,10 @@ private fun MainBudgetCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "👆 Toca la tarjeta para cambiar de presupuesto",
+                        text = if (currentLanguage == AppLanguage.SPANISH)
+                            "👆 Toca la tarjeta para cambiar de presupuesto"
+                        else
+                            "👆 Tap card to change budget",
                         color = Color.White.copy(alpha = 0.7f),
                         fontSize = 12.sp,
                         fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
@@ -467,14 +502,16 @@ private fun MainBudgetCard(
             }
         }
 
-        // Dropdown para cambiar presupuesto
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             modifier = Modifier.fillMaxWidth(0.85f)
         ) {
             Text(
-                text = "Selecciona un presupuesto",
+                text = if (currentLanguage == AppLanguage.SPANISH)
+                    "Selecciona un presupuesto"
+                else
+                    "Select a budget",
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -498,7 +535,10 @@ private fun MainBudgetCard(
                                     fontSize = 15.sp
                                 )
                                 Text(
-                                    text = "S/.${String.format("%.2f", budgetOption.montoPlaneado)} • Gastado: S/.${String.format("%.2f", budgetOption.montoGastado)}",
+                                    text = if (currentLanguage == AppLanguage.SPANISH)
+                                        "S/.${String.format("%.2f", budgetOption.montoPlaneado)} • Gastado: S/.${String.format("%.2f", budgetOption.montoGastado)}"
+                                    else
+                                        "S/.${String.format("%.2f", budgetOption.montoPlaneado)} • Spent: S/.${String.format("%.2f", budgetOption.montoGastado)}",
                                     fontSize = 12.sp,
                                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                 )
@@ -548,7 +588,6 @@ private fun RecentExpenseItem(
                 color = MaterialTheme.colorScheme.surfaceVariant
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    // ✅ VUELVE A EMOJI (más bonito)
                     Text(
                         text = getCategoryEmoji(category),
                         fontSize = 20.sp
@@ -582,6 +621,7 @@ private fun RecentExpenseItem(
 @Composable
 private fun BudgetDashboardCard(
     budget: Budget,
+    currentLanguage: AppLanguage,
     onClick: () -> Unit
 ) {
     val progress = if (budget.montoPlaneado > 0) {
@@ -629,7 +669,10 @@ private fun BudgetDashboardCard(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "Gastado: S/.${String.format("%.2f", budget.montoGastado)}",
+                text = if (currentLanguage == AppLanguage.SPANISH)
+                    "Gastado: S/.${String.format("%.2f", budget.montoGastado)}"
+                else
+                    "Spent: S/.${String.format("%.2f", budget.montoGastado)}",
                 color = Color.White.copy(alpha = 0.9f),
                 fontSize = 12.sp
             )
@@ -648,7 +691,10 @@ private fun BudgetDashboardCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "${(progress * 100).toInt()}% usado",
+                text = if (currentLanguage == AppLanguage.SPANISH)
+                    "${(progress * 100).toInt()}% usado"
+                else
+                    "${(progress * 100).toInt()}% used",
                 color = Color.White.copy(alpha = 0.8f),
                 fontSize = 11.sp
             )
@@ -656,32 +702,16 @@ private fun BudgetDashboardCard(
     }
 }
 
-// ✅ Emojis para gastos recientes (más coloridos y bonitos)
 private fun getCategoryEmoji(category: String): String {
     return when (category) {
-        "Restaurantes" -> "🍽️"
-        "Compras" -> "🛍️"
-        "Transporte" -> "🚗"
-        "Entretenimiento" -> "🎵"
-        "Salud" -> "💊"
-        "Educación" -> "📖"
-        "Servicios" -> "🔨"
-        "Hogar" -> "🏠"
+        "Restaurantes", "Restaurants" -> "🍽️"
+        "Compras", "Shopping" -> "🛍️"
+        "Transporte", "Transport" -> "🚗"
+        "Entretenimiento", "Entertainment" -> "🎵"
+        "Salud", "Health" -> "💊"
+        "Educación", "Education" -> "📖"
+        "Servicios", "Services" -> "🔨"
+        "Hogar", "Home" -> "🏠"
         else -> "💰"
-    }
-}
-
-// ✅ Iconos Material para BottomNav (más profesional)
-private fun getCategoryIcon(category: String): ImageVector {
-    return when (category) {
-        "Restaurantes" -> Icons.Filled.Restaurant
-        "Compras" -> Icons.Filled.ShoppingCart
-        "Transporte" -> Icons.Filled.DirectionsCar
-        "Entretenimiento" -> Icons.Filled.Theaters
-        "Salud" -> Icons.Filled.LocalHospital
-        "Educación" -> Icons.Filled.School
-        "Servicios" -> Icons.Filled.Build
-        "Hogar" -> Icons.Filled.Home
-        else -> Icons.Filled.AccountBalance
     }
 }

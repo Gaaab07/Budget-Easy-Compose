@@ -15,6 +15,7 @@
     <string name="login_here">Login here</string>
 
     <!-- Dashboard -->
+    <string name="welcome">Welcome!</string>
     <string name="vacations">Vacations</string>
     <string name="recent_expenses">Recent Expenses</string>
     <string name="my_budgets">My Budgets</string>
@@ -72,11 +73,15 @@
     <string name="view_expenses">View Expenses</string>
     <string name="used">used</string>
 
-    <!-- Profile -->
+    <!-- Profile & Settings -->
+    <string name="settings">Settings</string>
+    <string name="settings_description">Theme, language and more</string>
     <string name="preferences">Preferences</string>
+    <string name="appearance">Appearance</string>
+    <string name="account">Account</string>
     <string name="theme">Theme</string>
-    <string name="theme_light">☀️ Light</string>
-    <string name="theme_dark">🌙 Dark</string>
+    <string name="light_theme">☀️ Light</string>
+    <string name="dark_theme">🌙 Dark</string>
     <string name="language">Language</string>
     <string name="language_spanish">🇪🇸 Español</string>
     <string name="language_english">🇺🇸 English</string>

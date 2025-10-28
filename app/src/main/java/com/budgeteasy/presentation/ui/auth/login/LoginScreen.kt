@@ -2,6 +2,7 @@ package com.budgeteasy.presentation.ui.auth.login
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,18 +10,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -34,6 +39,11 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val isDarkTheme = isSystemInDarkTheme() // 🔥 Detectar tema
+
+    // 🔥 Colores adaptativos para TextField
+    val textColor = if (isDarkTheme) Color.White else Color.Black
+    val labelColor = if (isDarkTheme) Color.White.copy(alpha = 0.7f) else Color.Gray
 
     Column(
         modifier = Modifier
@@ -51,27 +61,51 @@ fun LoginScreen(
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        // Email TextField
-        TextField(
+        // Email TextField - 🔥 MÁS CLARO
+        OutlinedTextField(
             value = uiState.email,
             onValueChange = { viewModel.onEmailChanged(it) },
             label = { Text("Email") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
-            singleLine = true
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = textColor, // 🔥 Blanco en dark, negro en light
+                unfocusedTextColor = textColor,
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                focusedBorderColor = PrimaryGreen,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                focusedLabelColor = PrimaryGreen,
+                unfocusedLabelColor = labelColor,
+                cursorColor = PrimaryGreen
+            ),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
         )
 
-        // Contraseña TextField
-        TextField(
+        // Contraseña TextField - 🔥 MÁS CLARO
+        OutlinedTextField(
             value = uiState.contrasena,
             onValueChange = { viewModel.onContrasenaChanged(it) },
             label = { Text("Contraseña") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 24.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = textColor, // 🔥 Blanco en dark, negro en light
+                unfocusedTextColor = textColor,
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                focusedBorderColor = PrimaryGreen,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                focusedLabelColor = PrimaryGreen,
+                unfocusedLabelColor = labelColor,
+                cursorColor = PrimaryGreen
+            ),
             singleLine = true,
-            visualTransformation = PasswordVisualTransformation()
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
         )
 
         // Error message

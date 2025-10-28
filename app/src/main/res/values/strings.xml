@@ -15,6 +15,7 @@
     <string name="login_here">Inicia sesión aquí</string>
 
     <!-- Dashboard -->
+    <string name="welcome">¡Bienvenido!</string>
     <string name="vacations">Vacaciones</string>
     <string name="recent_expenses">Gastos Recientes</string>
     <string name="my_budgets">Mis Presupuestos</string>
@@ -72,11 +73,15 @@
     <string name="view_expenses">Ver Gastos</string>
     <string name="used">usado</string>
 
-    <!-- Profile -->
+    <!-- Profile & Settings -->
+    <string name="settings">Configuración</string>
+    <string name="settings_description">Tema, idioma y más</string>
     <string name="preferences">Preferencias</string>
+    <string name="appearance">Apariencia</string>
+    <string name="account">Cuenta</string>
     <string name="theme">Tema</string>
-    <string name="theme_light">☀️ Claro</string>
-    <string name="theme_dark">🌙 Oscuro</string>
+    <string name="light_theme">☀️ Claro</string>
+    <string name="dark_theme">🌙 Oscuro</string>
     <string name="language">Idioma</string>
     <string name="language_spanish">🇪🇸 Español</string>
     <string name="language_english">🇺🇸 English</string>

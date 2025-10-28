@@ -17,6 +17,7 @@ import com.budgeteasy.presentation.ui.expense.list.ExpenseListScreen
 import com.budgeteasy.presentation.ui.expense.detail.ExpenseDetailScreen
 import com.budgeteasy.presentation.ui.expense.all.AllExpensesScreen
 import com.budgeteasy.presentation.ui.profile.ProfileScreen
+import com.budgeteasy.presentation.ui.settings.SettingsScreen
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -159,5 +160,12 @@ fun NavGraph(navController: NavHostController) {
                 userId = userId
             )
         }
+        // Agregar en NavGraph.kt después de Profile:
+
+        composable(Screen.Settings.route) {
+            SettingsScreen(navController = navController)
+        }
+
+
     }
 }
