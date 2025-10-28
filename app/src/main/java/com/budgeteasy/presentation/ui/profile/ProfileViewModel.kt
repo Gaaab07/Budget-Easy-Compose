@@ -2,27 +2,64 @@ package com.budgeteasy.presentation.ui.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.budgeteasy.data.preferences.AppLanguage
+import com.budgeteasy.data.preferences.LanguageManager
+import com.budgeteasy.data.preferences.ThemeManager
+import com.budgeteasy.data.preferences.ThemeMode
 import com.budgeteasy.domain.model.User
 import com.budgeteasy.domain.usecase.user.GetUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val getUserUseCase: GetUserUseCase
+    private val getUserUseCase: GetUserUseCase,
+    private val themeManager: ThemeManager,
+    private val languageManager: LanguageManager
 ) : ViewModel() {
 
     private val _user = MutableStateFlow<User?>(null)
-    val user: StateFlow<User?> = _user.asStateFlow()
+    val user: StateFlow<User?> = _user
+
+    // Observar el tema actual
+    val currentTheme: StateFlow<ThemeMode> = themeManager.themeMode
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = ThemeMode.LIGHT
+        )
+
+    // Observar el idioma actual
+    val currentLanguage: StateFlow<AppLanguage> = languageManager.appLanguage
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = AppLanguage.SPANISH
+        )
 
     fun loadUser(userId: Int) {
         viewModelScope.launch {
-            val userData = getUserUseCase(userId)
-            _user.value = userData
+            try {
+                val userData = getUserUseCase(userId)
+                _user.value = userData
+            } catch (e: Exception) {
+                _user.value = null
+            }
         }
+    }
+
+    // Cambiar el tema
+    suspend fun setThemeMode(mode: ThemeMode) {
+        themeManager.setThemeMode(mode)
+    }
+
+    // Cambiar el idioma
+    suspend fun setLanguage(language: AppLanguage) {
+        languageManager.setLanguage(language)
     }
 }

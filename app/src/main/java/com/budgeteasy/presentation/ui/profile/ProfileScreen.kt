@@ -1,10 +1,13 @@
 package com.budgeteasy.presentation.ui.profile
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Person
@@ -14,14 +17,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.budgeteasy.R
+import com.budgeteasy.data.preferences.AppLanguage
+import com.budgeteasy.data.preferences.ThemeMode
 import com.budgeteasy.presentation.theme.PrimaryGreen
 import com.budgeteasy.presentation.ui.navigation.BottomNavigationBar
 import com.budgeteasy.presentation.ui.navigation.Screen
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,7 +39,10 @@ fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val user by viewModel.user.collectAsState()
+    val currentTheme by viewModel.currentTheme.collectAsState()
+    val currentLanguage by viewModel.currentLanguage.collectAsState()
     var showLogoutDialog by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         viewModel.loadUser(userId)
@@ -97,62 +108,58 @@ fun ProfileScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
-                    text = "Información Personal",
+                    text = stringResource(R.string.preferences),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
 
+                // Selector de Tema
+                ThemeSelector(
+                    currentTheme = currentTheme,
+                    onThemeSelected = { theme ->
+                        scope.launch {
+                            viewModel.setThemeMode(theme)
+                        }
+                    }
+                )
+
+                // Selector de Idioma
+                LanguageSelector(
+                    currentLanguage = currentLanguage,
+                    onLanguageSelected = { language ->
+                        scope.launch {
+                            viewModel.setLanguage(language)
+                            // Recrear activity para aplicar idioma
+                            (navController.context as? ComponentActivity)?.recreate()
+                        }
+                    }
+                )
+
+                Text(
+                    text = stringResource(R.string.personal_info),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
+                )
+
                 // Nombre completo
                 ProfileInfoCard(
                     icon = Icons.Default.Person,
-                    title = "Nombre completo",
+                    title = stringResource(R.string.full_name),
                     value = "${user?.nombre ?: ""} ${user?.apellidos ?: ""}"
                 )
 
                 // Email
                 ProfileInfoCard(
                     icon = Icons.Default.Email,
-                    title = "Correo electrónico",
+                    title = stringResource(R.string.email),
                     value = user?.email ?: ""
                 )
 
-                // Idioma
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        Text(
-                            text = "🌐",
-                            fontSize = 24.sp
-                        )
-                        Column {
-                            Text(
-                                text = "Idioma",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Text(
-                                text = user?.idioma ?: "Español",
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.Medium
-                            )
-                        }
-                    }
-                }
+                
 
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.height(24.dp))
 
                 // Botón Cerrar Sesión
                 Button(
@@ -172,13 +179,13 @@ fun ProfileScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Cerrar Sesión",
+                        text = stringResource(R.string.logout), // ✅ Cambiado
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
@@ -187,8 +194,8 @@ fun ProfileScreen(
     if (showLogoutDialog) {
         AlertDialog(
             onDismissRequest = { showLogoutDialog = false },
-            title = { Text("Cerrar Sesión") },
-            text = { Text("¿Estás seguro de que deseas cerrar sesión?") },
+            title = { Text(stringResource(R.string.logout)) }, // ✅ Cambiado
+            text = { Text(stringResource(R.string.logout_confirmation)) }, // ✅ Cambiado
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -198,15 +205,205 @@ fun ProfileScreen(
                         }
                     }
                 ) {
-                    Text("Sí, cerrar sesión", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.yes_logout), color = MaterialTheme.colorScheme.error) // ✅ Cambiado
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showLogoutDialog = false }) {
-                    Text("Cancelar")
+                    Text(stringResource(R.string.cancel)) // ✅ Cambiado
                 }
             }
         )
+    }
+}
+
+@Composable
+fun LanguageSelector(
+    currentLanguage: AppLanguage,
+    onLanguageSelected: (AppLanguage) -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = "🌐",
+                    fontSize = 24.sp
+                )
+                Text(
+                    text = stringResource(R.string.language),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                LanguageOption(
+                    text = stringResource(R.string.language_spanish),
+                    isSelected = currentLanguage == AppLanguage.SPANISH,
+                    onClick = { onLanguageSelected(AppLanguage.SPANISH) },
+                    modifier = Modifier.weight(1f)
+                )
+                LanguageOption(
+                    text = stringResource(R.string.language_english),
+                    isSelected = currentLanguage == AppLanguage.ENGLISH,
+                    onClick = { onLanguageSelected(AppLanguage.ENGLISH) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun LanguageOption(
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier
+            .height(48.dp)
+            .clickable { onClick() },
+        shape = RoundedCornerShape(8.dp),
+        color = if (isSelected) {
+            MaterialTheme.colorScheme.primaryContainer
+        } else {
+            MaterialTheme.colorScheme.surfaceVariant
+        },
+        border = if (isSelected) {
+            androidx.compose.foundation.BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+        } else null
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                color = if (isSelected) {
+                    MaterialTheme.colorScheme.onPrimaryContainer
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun ThemeSelector(
+    currentTheme: ThemeMode,
+    onThemeSelected: (ThemeMode) -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = "🌙",
+                    fontSize = 24.sp
+                )
+                Text(
+                    text = stringResource(R.string.theme),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                ThemeOption(
+                    text = stringResource(R.string.theme_light),
+                    isSelected = currentTheme == ThemeMode.LIGHT,
+                    onClick = { onThemeSelected(ThemeMode.LIGHT) },
+                    modifier = Modifier.weight(1f)
+                )
+                ThemeOption(
+                    text = stringResource(R.string.theme_dark),
+                    isSelected = currentTheme == ThemeMode.DARK,
+                    onClick = { onThemeSelected(ThemeMode.DARK) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ThemeOption(
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier
+            .height(48.dp)
+            .clickable { onClick() },
+        shape = RoundedCornerShape(8.dp),
+        color = if (isSelected) {
+            MaterialTheme.colorScheme.primaryContainer
+        } else {
+            MaterialTheme.colorScheme.surfaceVariant
+        },
+        border = if (isSelected) {
+            androidx.compose.foundation.BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+        } else null
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                color = if (isSelected) {
+                    MaterialTheme.colorScheme.onPrimaryContainer
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                }
+            )
+        }
     }
 }
 

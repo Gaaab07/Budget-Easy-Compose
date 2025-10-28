@@ -3,40 +3,40 @@ package com.budgeteasy.presentation.ui.navigation
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 
 // Sealed class para las rutas del Bottom Nav
 sealed class BottomNavItem(
     val route: String,
     val title: String,
-    val emoji: String
+    val icon: ImageVector
 ) {
     object Home : BottomNavItem(
         route = "dashboard",
         title = "Inicio",
-        emoji = "🏠"  // Hogar
+        icon = Icons.Default.Home
     )
-
     object Budgets : BottomNavItem(
         route = "budget_list",
         title = "Presupuestos",
-        emoji = "💰"  // Dinero (consistente con getCategoryIconForExpense)
+        icon = Icons.Default.AccountBalanceWallet
     )
-
     object Expenses : BottomNavItem(
         route = "all_expenses",
         title = "Gastos",
-        emoji = "📊"  // Gráfico
+        icon = Icons.Default.Receipt
     )
-
     object Profile : BottomNavItem(
         route = "profile",
         title = "Perfil",
-        emoji = "👤"  // Persona
+        icon = Icons.Default.Person
     )
 }
 
@@ -64,10 +64,9 @@ fun BottomNavigationBar(
 
             NavigationBarItem(
                 icon = {
-                    Text(
-                        text = item.emoji,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Normal
+                    Icon(
+                        imageVector = item.icon,
+                        contentDescription = item.title
                     )
                 },
                 label = { Text(item.title) },

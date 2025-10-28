@@ -2,6 +2,8 @@ package com.budgeteasy.presentation.ui.auth.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.budgeteasy.data.preferences.AppLanguage
+import com.budgeteasy.data.preferences.LanguageManager
 import com.budgeteasy.domain.model.User
 import com.budgeteasy.domain.usecase.user.RegisterUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +19,7 @@ data class RegisterUiState(
     val contrasena: String = "",
     val confirmContrasena: String = "",
     val numeroDeTelefono: String = "",
-    val idioma: String = "es",
+    val selectedLanguage: AppLanguage = AppLanguage.SPANISH,
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val isRegisterSuccessful: Boolean = false
@@ -25,7 +27,8 @@ data class RegisterUiState(
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val registerUserUseCase: RegisterUserUseCase
+    private val registerUserUseCase: RegisterUserUseCase,
+    private val languageManager: LanguageManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RegisterUiState())
@@ -55,8 +58,8 @@ class RegisterViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(numeroDeTelefono = newNumeroDeTelefono)
     }
 
-    fun onIdiomaChanged(newIdioma: String) {
-        _uiState.value = _uiState.value.copy(idioma = newIdioma)
+    fun onLanguageChanged(newLanguage: AppLanguage) {
+        _uiState.value = _uiState.value.copy(selectedLanguage = newLanguage)
     }
 
     fun register() {
@@ -113,10 +116,13 @@ class RegisterViewModel @Inject constructor(
                     email = currentState.email,
                     contrasena = currentState.contrasena,
                     numeroDeTelefono = currentState.numeroDeTelefono,
-                    idioma = currentState.idioma
+                    idioma = currentState.selectedLanguage.code // Guardar código de idioma
                 )
 
                 registerUserUseCase(newUser)
+
+                // Guardar idioma seleccionado en LanguageManager
+                languageManager.setLanguage(currentState.selectedLanguage)
 
                 _uiState.value = currentState.copy(
                     isLoading = false,

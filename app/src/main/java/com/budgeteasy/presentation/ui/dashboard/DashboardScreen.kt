@@ -8,12 +8,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -531,7 +532,7 @@ private fun RecentExpenseItem(
 ) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .clickable { onClick() }
             .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -547,8 +548,9 @@ private fun RecentExpenseItem(
                 color = MaterialTheme.colorScheme.surfaceVariant
             ) {
                 Box(contentAlignment = Alignment.Center) {
+                    // ✅ VUELVE A EMOJI (más bonito)
                     Text(
-                        text = getCategoryIcon(category),
+                        text = getCategoryEmoji(category),
                         fontSize = 20.sp
                     )
                 }
@@ -654,7 +656,8 @@ private fun BudgetDashboardCard(
     }
 }
 
-private fun getCategoryIcon(category: String): String {
+// ✅ Emojis para gastos recientes (más coloridos y bonitos)
+private fun getCategoryEmoji(category: String): String {
     return when (category) {
         "Restaurantes" -> "🍽️"
         "Compras" -> "🛍️"
@@ -665,5 +668,20 @@ private fun getCategoryIcon(category: String): String {
         "Servicios" -> "🔨"
         "Hogar" -> "🏠"
         else -> "💰"
+    }
+}
+
+// ✅ Iconos Material para BottomNav (más profesional)
+private fun getCategoryIcon(category: String): ImageVector {
+    return when (category) {
+        "Restaurantes" -> Icons.Filled.Restaurant
+        "Compras" -> Icons.Filled.ShoppingCart
+        "Transporte" -> Icons.Filled.DirectionsCar
+        "Entretenimiento" -> Icons.Filled.Theaters
+        "Salud" -> Icons.Filled.LocalHospital
+        "Educación" -> Icons.Filled.School
+        "Servicios" -> Icons.Filled.Build
+        "Hogar" -> Icons.Filled.Home
+        else -> Icons.Filled.AccountBalance
     }
 }

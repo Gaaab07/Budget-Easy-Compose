@@ -1,0 +1,97 @@
+<resources>
+    <string name="app_name">Budget Easy</string>
+
+    <!-- Login/Register -->
+    <string name="login">Login</string>
+    <string name="register">Sign Up</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="name">Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="dont_have_account">Don\'t have an account?</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="sign_up_here">Sign up here</string>
+    <string name="login_here">Login here</string>
+
+    <!-- Dashboard -->
+    <string name="vacations">Vacations</string>
+    <string name="recent_expenses">Recent Expenses</string>
+    <string name="my_budgets">My Budgets</string>
+    <string name="add_new">Add New</string>
+    <string name="add_budget">Add Budget</string>
+    <string name="no_expenses_yet">No expenses registered yet</string>
+    <string name="total_budget">Total Budget</string>
+    <string name="spent">Spent</string>
+    <string name="available">Available</string>
+    <string name="budget_used">%d%% of budget used</string>
+    <string name="tap_to_change_budget">👆 Tap card to change budget</string>
+    <string name="select_budget">Select a budget</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_budgets">Budgets</string>
+    <string name="nav_expenses">Expenses</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Add Expense -->
+    <string name="add_expense">Add Expense</string>
+    <string name="expense_name">Expense Name</string>
+    <string name="expense_name_hint">E.g: Saturday dinner</string>
+    <string name="amount">Amount (S/.)</string>
+    <string name="amount_hint">0.00</string>
+    <string name="category">Category</string>
+    <string name="date">Date</string>
+    <string name="note">Note (optional)</string>
+    <string name="note_hint">Add a description...</string>
+    <string name="add_expense_button">✅ Add Expense</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Categories -->
+    <string name="category_restaurants">Restaurants</string>
+    <string name="category_shopping">Shopping</string>
+    <string name="category_transport">Transport</string>
+    <string name="category_entertainment">Entertainment</string>
+    <string name="category_health">Health</string>
+    <string name="category_education">Education</string>
+    <string name="category_services">Services</string>
+    <string name="category_home">Home</string>
+    <string name="category_other">Other</string>
+
+    <!-- All Expenses -->
+    <string name="my_expenses">My Expenses</string>
+    <string name="full_history">Full history</string>
+    <string name="total_spent">Total Spent</string>
+    <string name="no_expenses_registered">No expenses registered</string>
+    <string name="add_expenses_from_budgets">Add expenses from your budgets</string>
+
+    <!-- Budget List -->
+    <string name="create_budget">+ Create Budget</string>
+    <string name="no_budgets_yet">You have no budgets. Create one!</string>
+    <string name="period">Period</string>
+    <string name="view_expenses">View Expenses</string>
+    <string name="used">used</string>
+
+    <!-- Profile -->
+    <string name="preferences">Preferences</string>
+    <string name="theme">Theme</string>
+    <string name="theme_light">☀️ Light</string>
+    <string name="theme_dark">🌙 Dark</string>
+    <string name="language">Language</string>
+    <string name="language_spanish">🇪🇸 Español</string>
+    <string name="language_english">🇺🇸 English</string>
+    <string name="personal_info">Personal Information</string>
+    <string name="full_name">Full name</string>
+    <string name="logout">Logout</string>
+    <string name="logout_confirmation">Are you sure you want to logout?</string>
+    <string name="yes_logout">Yes, logout</string>
+
+    <!-- Common -->
+    <string name="back">Back</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="error">Error</string>
+    <string name="loading">Loading...</string>
+    <string name="success">Success</string>
+</resources>

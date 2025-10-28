@@ -1,3 +1,97 @@
 <resources>
     <string name="app_name">Budget Easy</string>
+
+    <!-- Login/Register -->
+    <string name="login">Iniciar Sesión</string>
+    <string name="register">Registrarse</string>
+    <string name="email">Correo electrónico</string>
+    <string name="password">Contraseña</string>
+    <string name="name">Nombre</string>
+    <string name="last_name">Apellidos</string>
+    <string name="confirm_password">Confirmar contraseña</string>
+    <string name="dont_have_account">¿No tienes cuenta?</string>
+    <string name="already_have_account">¿Ya tienes cuenta?</string>
+    <string name="sign_up_here">Regístrate aquí</string>
+    <string name="login_here">Inicia sesión aquí</string>
+
+    <!-- Dashboard -->
+    <string name="vacations">Vacaciones</string>
+    <string name="recent_expenses">Gastos Recientes</string>
+    <string name="my_budgets">Mis Presupuestos</string>
+    <string name="add_new">Añadir nuevo</string>
+    <string name="add_budget">Añadir Presupuesto</string>
+    <string name="no_expenses_yet">No hay gastos registrados aún</string>
+    <string name="total_budget">Presupuesto Total</string>
+    <string name="spent">Gastado</string>
+    <string name="available">Disponible</string>
+    <string name="budget_used">%d%% del presupuesto usado</string>
+    <string name="tap_to_change_budget">👆 Toca la tarjeta para cambiar de presupuesto</string>
+    <string name="select_budget">Selecciona un presupuesto</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">Inicio</string>
+    <string name="nav_budgets">Presupuestos</string>
+    <string name="nav_expenses">Gastos</string>
+    <string name="nav_profile">Perfil</string>
+
+    <!-- Add Expense -->
+    <string name="add_expense">Agregar Gasto</string>
+    <string name="expense_name">Nombre del Gasto</string>
+    <string name="expense_name_hint">Ej: Cena del sábado</string>
+    <string name="amount">Monto (S/.)</string>
+    <string name="amount_hint">0.00</string>
+    <string name="category">Categoría</string>
+    <string name="date">Fecha</string>
+    <string name="note">Nota (opcional)</string>
+    <string name="note_hint">Agrega una descripción...</string>
+    <string name="add_expense_button">✅ Agregar Gasto</string>
+    <string name="cancel">Cancelar</string>
+
+    <!-- Categories -->
+    <string name="category_restaurants">Restaurantes</string>
+    <string name="category_shopping">Compras</string>
+    <string name="category_transport">Transporte</string>
+    <string name="category_entertainment">Entretenimiento</string>
+    <string name="category_health">Salud</string>
+    <string name="category_education">Educación</string>
+    <string name="category_services">Servicios</string>
+    <string name="category_home">Hogar</string>
+    <string name="category_other">Otros</string>
+
+    <!-- All Expenses -->
+    <string name="my_expenses">Mis Gastos</string>
+    <string name="full_history">Historial completo</string>
+    <string name="total_spent">Total Gastado</string>
+    <string name="no_expenses_registered">No hay gastos registrados</string>
+    <string name="add_expenses_from_budgets">Agrega gastos desde tus presupuestos</string>
+
+    <!-- Budget List -->
+    <string name="create_budget">+ Crear Presupuesto</string>
+    <string name="no_budgets_yet">No tienes presupuestos. ¡Crea uno!</string>
+    <string name="period">Período</string>
+    <string name="view_expenses">Ver Gastos</string>
+    <string name="used">usado</string>
+
+    <!-- Profile -->
+    <string name="preferences">Preferencias</string>
+    <string name="theme">Tema</string>
+    <string name="theme_light">☀️ Claro</string>
+    <string name="theme_dark">🌙 Oscuro</string>
+    <string name="language">Idioma</string>
+    <string name="language_spanish">🇪🇸 Español</string>
+    <string name="language_english">🇺🇸 English</string>
+    <string name="personal_info">Información Personal</string>
+    <string name="full_name">Nombre completo</string>
+    <string name="logout">Cerrar Sesión</string>
+    <string name="logout_confirmation">¿Estás seguro de que deseas cerrar sesión?</string>
+    <string name="yes_logout">Sí, cerrar sesión</string>
+
+    <!-- Common -->
+    <string name="back">Volver</string>
+    <string name="save">Guardar</string>
+    <string name="delete">Eliminar</string>
+    <string name="edit">Editar</string>
+    <string name="error">Error</string>
+    <string name="loading">Cargando...</string>
+    <string name="success">Éxito</string>
 </resources>
