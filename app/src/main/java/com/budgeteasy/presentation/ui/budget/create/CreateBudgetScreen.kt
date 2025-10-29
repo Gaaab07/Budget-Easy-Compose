@@ -27,9 +27,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.budgeteasy.R
 import com.budgeteasy.presentation.theme.PrimaryGreen
 
 @Composable
@@ -40,7 +42,14 @@ fun CreateBudgetScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var expandedPeriodo by remember { mutableStateOf(false) }
-    val periodos = listOf("1 mes", "3 meses", "6 meses", "1 año")
+
+    // ✅ Periodos traducibles
+    val periodos = listOf(
+        stringResource(R.string.period_1_month),
+        stringResource(R.string.period_3_months),
+        stringResource(R.string.period_6_months),
+        stringResource(R.string.period_1_year)
+    )
 
     Column(
         modifier = Modifier
@@ -51,37 +60,37 @@ fun CreateBudgetScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        // Título
+        // ✅ Título traducible
         Text(
-            text = "Crear Presupuesto",
+            text = stringResource(R.string.create_budget),
             style = MaterialTheme.typography.displaySmall,
             color = PrimaryGreen,
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        // Nombre TextField
+        // ✅ Nombre TextField traducible
         TextField(
             value = uiState.nombre,
             onValueChange = { viewModel.onNombreChanged(it) },
-            label = { Text("Nombre del Presupuesto") },
+            label = { Text(stringResource(R.string.budget_name)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
             singleLine = true
         )
 
-        // Monto Planeado TextField
+        // ✅ Monto Planeado TextField traducible
         TextField(
             value = uiState.montoPlaneado,
             onValueChange = { viewModel.onMontoPlaneadoChanged(it) },
-            label = { Text("Monto a Gastar") },
+            label = { Text(stringResource(R.string.amount_to_spend)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
             singleLine = true
         )
 
-        // Periodo Dropdown
+        // ✅ Periodo Dropdown traducible
         Button(
             onClick = { expandedPeriodo = !expandedPeriodo },
             modifier = Modifier
@@ -90,7 +99,7 @@ fun CreateBudgetScreen(
                 .padding(bottom = 16.dp),
             colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
         ) {
-            Text("Período: ${uiState.periodo}")
+            Text("${stringResource(R.string.period)}: ${uiState.periodo}")
         }
 
         DropdownMenu(
@@ -109,11 +118,11 @@ fun CreateBudgetScreen(
             }
         }
 
-        // Descripción TextField
+        // ✅ Descripción TextField traducible
         TextField(
             value = uiState.descripcion,
             onValueChange = { viewModel.onDescripcionChanged(it) },
-            label = { Text("Descripción (opcional)") },
+            label = { Text(stringResource(R.string.description_optional)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 24.dp),
@@ -130,7 +139,7 @@ fun CreateBudgetScreen(
             )
         }
 
-        // Create Button
+        // ✅ Create Button traducible
         Button(
             onClick = { viewModel.createBudget(userId) },
             modifier = Modifier
@@ -145,13 +154,13 @@ fun CreateBudgetScreen(
                     color = MaterialTheme.colorScheme.background
                 )
             } else {
-                Text("Crear Presupuesto")
+                Text(stringResource(R.string.create_budget_button))
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Back Button
+        // ✅ Back Button traducible
         Button(
             onClick = { navController.popBackStack() },
             modifier = Modifier
@@ -159,11 +168,11 @@ fun CreateBudgetScreen(
                 .height(50.dp),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
         ) {
-            Text("Volver")
+            Text(stringResource(R.string.go_back))
         }
     }
 
-    // Handle create success - Navega de vuelta al Dashboard
+    // Handle create success
     if (uiState.isCreateSuccessful) {
         LaunchedEffect(Unit) {
             navController.popBackStack()

@@ -2,7 +2,6 @@ package com.budgeteasy.presentation.ui.auth.login
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -39,11 +38,6 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val isDarkTheme = isSystemInDarkTheme() // 🔥 Detectar tema
-
-    // 🔥 Colores adaptativos para TextField
-    val textColor = if (isDarkTheme) Color.White else Color.Black
-    val labelColor = if (isDarkTheme) Color.White.copy(alpha = 0.7f) else Color.Gray
 
     Column(
         modifier = Modifier
@@ -61,7 +55,7 @@ fun LoginScreen(
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        // Email TextField - 🔥 MÁS CLARO
+        // Email TextField - ✅ ADAPTATIVO
         OutlinedTextField(
             value = uiState.email,
             onValueChange = { viewModel.onEmailChanged(it) },
@@ -70,21 +64,31 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = textColor, // 🔥 Blanco en dark, negro en light
-                unfocusedTextColor = textColor,
+                // ✅ TEXTO que se adapta automáticamente:
+                // Negro en light, Blanco en dark
+                focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
+
+                // Fondo del campo (ligeramente diferente al background)
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+
+                // Bordes
                 focusedBorderColor = PrimaryGreen,
                 unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+
+                // Labels
                 focusedLabelColor = PrimaryGreen,
-                unfocusedLabelColor = labelColor,
+                unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+
+                // Cursor
                 cursorColor = PrimaryGreen
             ),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
         )
 
-        // Contraseña TextField - 🔥 MÁS CLARO
+        // Contraseña TextField - ✅ ADAPTATIVO
         OutlinedTextField(
             value = uiState.contrasena,
             onValueChange = { viewModel.onContrasenaChanged(it) },
@@ -93,14 +97,24 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .padding(bottom = 24.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = textColor, // 🔥 Blanco en dark, negro en light
-                unfocusedTextColor = textColor,
+                // ✅ TEXTO que se adapta automáticamente:
+                // Negro en light, Blanco en dark
+                focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
+
+                // Fondo del campo
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+
+                // Bordes
                 focusedBorderColor = PrimaryGreen,
                 unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+
+                // Labels
                 focusedLabelColor = PrimaryGreen,
-                unfocusedLabelColor = labelColor,
+                unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+
+                // Cursor
                 cursorColor = PrimaryGreen
             ),
             singleLine = true,
@@ -130,10 +144,10 @@ fun LoginScreen(
             if (uiState.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.height(24.dp),
-                    color = MaterialTheme.colorScheme.background
+                    color = Color.White
                 )
             } else {
-                Text("Iniciar Sesión")
+                Text("Iniciar Sesión", color = Color.White)
             }
         }
 

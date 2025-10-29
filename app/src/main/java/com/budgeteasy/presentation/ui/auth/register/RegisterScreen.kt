@@ -1,6 +1,6 @@
 package com.budgeteasy.presentation.ui.auth.register
 
-import androidx.activity.ComponentActivity
+import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -31,6 +32,7 @@ fun RegisterScreen(
     viewModel: RegisterViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
     var expandedIdioma by remember { mutableStateOf(false) }
 
     Column(
@@ -107,18 +109,18 @@ fun RegisterScreen(
             visualTransformation = PasswordVisualTransformation()
         )
 
-        // Teléfono TextField (eliminar si no lo necesitas en la BD)
+        // Teléfono TextField
         TextField(
             value = uiState.numeroDeTelefono,
             onValueChange = { viewModel.onNumeroDeTelefonoChanged(it) },
-            label = { Text("Teléfono") }, // Este no está en strings porque no es crítico
+            label = { Text(stringResource(R.string.phone)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
             singleLine = true
         )
 
-        // Selector de Idioma (Mejorado)
+        // Selector de Idioma
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -163,7 +165,7 @@ fun RegisterScreen(
                     }
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,
-                        contentDescription = "Seleccionar idioma",
+                        contentDescription = stringResource(R.string.language),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -247,23 +249,38 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         // Login Link
-        Text(
-            text = stringResource(R.string.already_have_account) + " " + stringResource(R.string.login_here),
-            style = MaterialTheme.typography.bodyMedium,
-            color = PrimaryGreen,
-            modifier = Modifier.clickable {
-                navController.navigate(Screen.Login.route) {
-                    popUpTo(Screen.Register.route) { inclusive = true }
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.already_have_account),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = stringResource(R.string.login_here),
+                style = MaterialTheme.typography.bodyMedium,
+                color = PrimaryGreen,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.clickable {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(Screen.Register.route) { inclusive = true }
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 
-    // Handle register success - Navega al Login y recrea activity para aplicar idioma
-    if (uiState.isRegisterSuccessful) {
-        LaunchedEffect(Unit) {
-            // Recrear activity para aplicar el nuevo idioma
-            (navController.context as? ComponentActivity)?.recreate()
+    // ✅ CORRECCIÓN: Solo navega al Login después del registro exitoso
+    // NO recrea la activity aquí, eso se hace en Settings cuando cambias idioma
+    LaunchedEffect(uiState.isRegisterSuccessful) {
+        if (uiState.isRegisterSuccessful) {
+            // Navegar al Login después del registro
+            navController.navigate(Screen.Login.route) {
+                popUpTo(Screen.Register.route) { inclusive = true }
+            }
         }
     }
 }

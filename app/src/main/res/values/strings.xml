@@ -73,6 +73,17 @@
     <string name="view_expenses">Ver Gastos</string>
     <string name="used">usado</string>
 
+    <!-- Create Budget Screen -->
+    <string name="budget_name">Nombre del Presupuesto</string>
+    <string name="amount_to_spend">Monto a Gastar</string>
+    <string name="period_1_month">1 mes</string>
+    <string name="period_3_months">3 meses</string>
+    <string name="period_6_months">6 meses</string>
+    <string name="period_1_year">1 año</string>
+    <string name="description_optional">Descripción (opcional)</string>
+    <string name="create_budget_button">Crear Presupuesto</string>
+    <string name="go_back">Volver</string>
+
     <!-- Profile & Settings -->
     <string name="settings">Configuración</string>
     <string name="settings_description">Tema, idioma y más</string>
@@ -99,4 +110,13 @@
     <string name="error">Error</string>
     <string name="loading">Cargando...</string>
     <string name="success">Éxito</string>
+
+    <string name="budget_for">PRESUPUESTO PARA</string>
+    <string name="user">Usuario</string>
+
+    <string name="phone">Teléfono</string>
+    <!-- Budget Alerts -->
+    <string name="budget_warning">¡Cuidado! Te queda poco presupuesto</string>
+    <string name="budget_exceeded">¡Presupuesto superado!</string>
+
 </resources>

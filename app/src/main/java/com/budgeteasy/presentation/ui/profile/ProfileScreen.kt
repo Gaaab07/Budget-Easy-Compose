@@ -98,21 +98,23 @@ fun ProfileScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                // ✅ Título traducible
                 Text(
                     text = stringResource(R.string.personal_info),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
 
-                // Nombre completo
+                // ✅ Nombre completo traducible
                 ProfileInfoCard(
                     icon = Icons.Default.Person,
                     title = stringResource(R.string.full_name),
                     value = "${user?.nombre ?: ""} ${user?.apellidos ?: ""}"
                 )
 
-                // Email
+                // ✅ Email traducible
                 ProfileInfoCard(
                     icon = Icons.Default.Email,
                     title = stringResource(R.string.email),
@@ -121,7 +123,7 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Botón Configuración
+                // ✅ Botón Configuración traducible
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -184,13 +186,10 @@ fun ProfileInfoCard(
     title: String,
     value: String
 ) {
-    val isDarkTheme = androidx.compose.foundation.isSystemInDarkTheme() // 🔥 Detectar tema
-    val valueColor = if (isDarkTheme) androidx.compose.ui.graphics.Color.White else androidx.compose.ui.graphics.Color.Black
-
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -218,7 +217,7 @@ fun ProfileInfoCard(
                     text = value,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Medium,
-                    color = valueColor // 🔥 Blanco en dark, negro en light
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }

@@ -13,11 +13,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.budgeteasy.R
 import com.budgeteasy.data.preferences.AppLanguage
 import com.budgeteasy.domain.model.Budget
 import com.budgeteasy.domain.model.Expense
@@ -91,16 +93,13 @@ fun DashboardScreen(
                         modifier = Modifier.padding(16.dp)
                     ) {
                         Text(
-                            text = if (currentLanguage == AppLanguage.SPANISH)
-                                "Error: $message"
-                            else
-                                "Error: $message",
+                            text = stringResource(R.string.error) + ": $message",
                             color = MaterialTheme.colorScheme.error,
                             fontSize = 16.sp
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(onClick = { navController.popBackStack() }) {
-                            Text(if (currentLanguage == AppLanguage.SPANISH) "Volver" else "Back")
+                            Text(stringResource(R.string.back))
                         }
                     }
                 }
@@ -132,6 +131,7 @@ private fun DashboardContent(
         item {
             DashboardHeader(
                 user = user,
+                selectedBudget = selectedBudget,
                 userId = userId,
                 navController = navController,
                 currentLanguage = currentLanguage
@@ -162,10 +162,7 @@ private fun DashboardContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = if (currentLanguage == AppLanguage.SPANISH)
-                        "Gastos Recientes"
-                    else
-                        "Recent Expenses",
+                    text = stringResource(R.string.recent_expenses),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
@@ -185,10 +182,7 @@ private fun DashboardContent(
         if (recentExpenses.isEmpty()) {
             item {
                 Text(
-                    text = if (currentLanguage == AppLanguage.SPANISH)
-                        "No hay gastos registrados aún"
-                    else
-                        "No expenses registered yet",
+                    text = stringResource(R.string.no_expenses_yet),
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                     modifier = Modifier.padding(horizontal = 16.dp)
@@ -236,7 +230,7 @@ private fun DashboardContent(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    if (currentLanguage == AppLanguage.SPANISH) "Añadir nuevo" else "Add New",
+                    stringResource(R.string.add_new),
                     color = Color.White,
                     fontWeight = FontWeight.Bold
                 )
@@ -247,10 +241,7 @@ private fun DashboardContent(
         // Título: Mis Presupuestos
         item {
             Text(
-                text = if (currentLanguage == AppLanguage.SPANISH)
-                    "Mis Presupuestos"
-                else
-                    "My Budgets",
+                text = stringResource(R.string.my_budgets),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -300,7 +291,7 @@ private fun DashboardContent(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    if (currentLanguage == AppLanguage.SPANISH) "Añadir Presupuesto" else "Add Budget",
+                    stringResource(R.string.add_budget),
                     color = Color.White,
                     fontWeight = FontWeight.Bold
                 )
@@ -313,6 +304,7 @@ private fun DashboardContent(
 @Composable
 private fun DashboardHeader(
     user: User?,
+    selectedBudget: Budget?,
     userId: Int,
     navController: NavController,
     currentLanguage: AppLanguage
@@ -326,14 +318,19 @@ private fun DashboardHeader(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column {
+            // ✅ CAMBIO PRINCIPAL: Título dinámico
             Text(
-                text = if (currentLanguage == AppLanguage.SPANISH) "Vacaciones" else "Vacations",
+                text = if (selectedBudget != null) {
+                    "${stringResource(R.string.budget_for)} ${selectedBudget.nombre.uppercase()}"
+                } else {
+                    stringResource(R.string.my_budgets)
+                },
                 color = Color.White,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = user?.nombre ?: if (currentLanguage == AppLanguage.SPANISH) "Usuario" else "User",
+                text = user?.nombre ?: stringResource(R.string.user),
                 color = Color.White.copy(alpha = 0.8f),
                 fontSize = 12.sp
             )
@@ -382,6 +379,18 @@ private fun MainBudgetCard(
 
     val porcentaje = (progress * 100).toInt()
 
+    // 🚨 Detectar si está en zona de peligro (≥90%)
+    val isAlmostOver = porcentaje >= 90
+    val isOverBudget = porcentaje >= 100
+
+    // 🎨 Color dinámico según el porcentaje
+    val cardColor = when {
+        isOverBudget -> Color(0xFFD32F2F) // Rojo fuerte - presupuesto superado
+        isAlmostOver -> Color(0xFFFF5722) // Rojo naranja - alerta crítica
+        porcentaje >= 75 -> Color(0xFFFF9800) // Naranja - precaución
+        else -> Color(0xFF66BB6A) // Verde - normal
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -389,7 +398,7 @@ private fun MainBudgetCard(
             .clickable(enabled = allBudgets.size > 1) { expanded = true },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF66BB6A)
+            containerColor = cardColor
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -407,10 +416,7 @@ private fun MainBudgetCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = if (currentLanguage == AppLanguage.SPANISH)
-                    "Presupuesto Total"
-                else
-                    "Total Budget",
+                text = stringResource(R.string.total_budget),
                 color = Color.White.copy(alpha = 0.8f),
                 fontSize = 12.sp
             )
@@ -429,7 +435,7 @@ private fun MainBudgetCard(
             ) {
                 Column {
                     Text(
-                        text = if (currentLanguage == AppLanguage.SPANISH) "Gastado" else "Spent",
+                        text = stringResource(R.string.spent),
                         color = Color.White.copy(alpha = 0.8f),
                         fontSize = 12.sp
                     )
@@ -443,10 +449,7 @@ private fun MainBudgetCard(
 
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        text = if (currentLanguage == AppLanguage.SPANISH)
-                            "Disponible"
-                        else
-                            "Available",
+                        text = stringResource(R.string.available),
                         color = Color.White.copy(alpha = 0.8f),
                         fontSize = 12.sp
                     )
@@ -473,10 +476,7 @@ private fun MainBudgetCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = if (currentLanguage == AppLanguage.SPANISH)
-                    "$porcentaje% del presupuesto usado"
-                else
-                    "$porcentaje% of budget used",
+                text = stringResource(R.string.budget_used, porcentaje),
                 color = Color.White.copy(alpha = 0.9f),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium
@@ -490,10 +490,7 @@ private fun MainBudgetCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = if (currentLanguage == AppLanguage.SPANISH)
-                            "👆 Toca la tarjeta para cambiar de presupuesto"
-                        else
-                            "👆 Tap card to change budget",
+                        text = stringResource(R.string.tap_to_change_budget),
                         color = Color.White.copy(alpha = 0.7f),
                         fontSize = 12.sp,
                         fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
@@ -508,10 +505,7 @@ private fun MainBudgetCard(
             modifier = Modifier.fillMaxWidth(0.85f)
         ) {
             Text(
-                text = if (currentLanguage == AppLanguage.SPANISH)
-                    "Selecciona un presupuesto"
-                else
-                    "Select a budget",
+                text = stringResource(R.string.select_budget),
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -535,10 +529,7 @@ private fun MainBudgetCard(
                                     fontSize = 15.sp
                                 )
                                 Text(
-                                    text = if (currentLanguage == AppLanguage.SPANISH)
-                                        "S/.${String.format("%.2f", budgetOption.montoPlaneado)} • Gastado: S/.${String.format("%.2f", budgetOption.montoGastado)}"
-                                    else
-                                        "S/.${String.format("%.2f", budgetOption.montoPlaneado)} • Spent: S/.${String.format("%.2f", budgetOption.montoGastado)}",
+                                    text = "S/.${String.format("%.2f", budgetOption.montoPlaneado)} • ${stringResource(R.string.spent)}: S/.${String.format("%.2f", budgetOption.montoGastado)}",
                                     fontSize = 12.sp,
                                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                 )
@@ -669,10 +660,7 @@ private fun BudgetDashboardCard(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = if (currentLanguage == AppLanguage.SPANISH)
-                    "Gastado: S/.${String.format("%.2f", budget.montoGastado)}"
-                else
-                    "Spent: S/.${String.format("%.2f", budget.montoGastado)}",
+                text = "${stringResource(R.string.spent)}: S/.${String.format("%.2f", budget.montoGastado)}",
                 color = Color.White.copy(alpha = 0.9f),
                 fontSize = 12.sp
             )
@@ -691,10 +679,7 @@ private fun BudgetDashboardCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = if (currentLanguage == AppLanguage.SPANISH)
-                    "${(progress * 100).toInt()}% usado"
-                else
-                    "${(progress * 100).toInt()}% used",
+                text = "${(progress * 100).toInt()}% ${stringResource(R.string.used)}",
                 color = Color.White.copy(alpha = 0.8f),
                 fontSize = 11.sp
             )
