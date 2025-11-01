@@ -55,7 +55,7 @@ fun LoginScreen(
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        // Email TextField - ✅ ADAPTATIVO
+        // Email TextField
         OutlinedTextField(
             value = uiState.email,
             onValueChange = { viewModel.onEmailChanged(it) },
@@ -64,63 +64,58 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                // ✅ TEXTO que se adapta automáticamente:
-                // Negro en light, Blanco en dark
                 focusedTextColor = MaterialTheme.colorScheme.onBackground,
                 unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
-
-                // Fondo del campo (ligeramente diferente al background)
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-
-                // Bordes
                 focusedBorderColor = PrimaryGreen,
                 unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-
-                // Labels
                 focusedLabelColor = PrimaryGreen,
                 unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-
-                // Cursor
                 cursorColor = PrimaryGreen
             ),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
         )
 
-        // Contraseña TextField - ✅ ADAPTATIVO
+        // Contraseña TextField
         OutlinedTextField(
             value = uiState.contrasena,
             onValueChange = { viewModel.onContrasenaChanged(it) },
             label = { Text("Contraseña") },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 24.dp),
+                .padding(bottom = 8.dp), // Reducido para dar espacio al link
             colors = OutlinedTextFieldDefaults.colors(
-                // ✅ TEXTO que se adapta automáticamente:
-                // Negro en light, Blanco en dark
                 focusedTextColor = MaterialTheme.colorScheme.onBackground,
                 unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
-
-                // Fondo del campo
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-
-                // Bordes
                 focusedBorderColor = PrimaryGreen,
                 unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-
-                // Labels
                 focusedLabelColor = PrimaryGreen,
                 unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-
-                // Cursor
                 cursorColor = PrimaryGreen
             ),
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
         )
+
+        // *** NUEVO: Enlace "¿Olvidó Contraseña?" ***
+        Text(
+            text = "¿Olvidó Contraseña?",
+            style = MaterialTheme.typography.bodySmall,
+            color = PrimaryGreen,
+            modifier = Modifier
+                .align(Alignment.End) // Alinea el texto a la derecha
+                .padding(bottom = 24.dp)
+                .clickable {
+                    // Navega a la nueva pantalla de recuperación
+                    navController.navigate(Screen.ForgotPassword.route)
+                }
+        )
+        // **********************************************
 
         // Error message
         if (uiState.errorMessage != null) {

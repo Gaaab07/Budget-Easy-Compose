@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 import com.budgeteasy.presentation.ui.splash.SplashScreen
 import com.budgeteasy.presentation.ui.auth.login.LoginScreen
 import com.budgeteasy.presentation.ui.auth.register.RegisterScreen
+import com.budgeteasy.presentation.ui.auth.forgotpassword.ForgotPasswordScreen // <-- ¡IMPORTACIÓN AÑADIDA!
 import com.budgeteasy.presentation.ui.dashboard.DashboardScreen
 import com.budgeteasy.presentation.ui.budget.list.BudgetListScreen
 import com.budgeteasy.presentation.ui.budget.create.CreateBudgetScreen
@@ -38,6 +39,11 @@ fun NavGraph(navController: NavHostController) {
         // REGISTER
         composable(Screen.Register.route) {
             RegisterScreen(navController = navController)
+        }
+
+        // FORGOT PASSWORD <-- ¡RUTA AÑADIDA!
+        composable(Screen.ForgotPassword.route) {
+            ForgotPasswordScreen(navController = navController)
         }
 
         // DASHBOARD - Pantalla principal con BottomNav
@@ -160,12 +166,9 @@ fun NavGraph(navController: NavHostController) {
                 userId = userId
             )
         }
-        // Agregar en NavGraph.kt después de Profile:
 
         composable(Screen.Settings.route) {
             SettingsScreen(navController = navController)
         }
-
-
     }
 }
