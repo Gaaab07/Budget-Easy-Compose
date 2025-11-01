@@ -10,5 +10,6 @@ interface IUserRepository {
     suspend fun updateUser(user: User)
     suspend fun deleteUser(user: User)
     suspend fun emailExists(email: String): Boolean
+    suspend fun updatePasswordByEmail(email: String, newPassword: String): Boolean
     fun getAllUsers(): Flow<List<User>>
 }
