@@ -1,6 +1,9 @@
 package com.budgeteasy.data.repository
 
 import com.budgeteasy.data.local.database.dao.ExpenseDao
+import com.budgeteasy.data.local.database.dao.BudgetDao // 👈 NUEVA IMPORTACIÓN
+import com.budgeteasy.data.local.database.BudgetDatabase // 👈 NUEVA IMPORTACIÓN
+import androidx.room.withTransaction // 👈 NUEVA IMPORTACIÓN
 import com.budgeteasy.data.local.database.entity.ExpenseEntity
 import com.budgeteasy.domain.model.Expense
 import com.budgeteasy.domain.repository.IExpenseRepository
@@ -9,8 +12,42 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class ExpenseRepository @Inject constructor(
-    private val expenseDao: ExpenseDao
+    private val expenseDao: ExpenseDao,
+    private val budgetDao: BudgetDao, // 👈 AÑADIDO
+    private val database: BudgetDatabase // 👈 AÑADIDO (Nombre de tu base de datos)
 ) : IExpenseRepository {
+
+    override suspend fun getExpenseByIdSingle(expenseId: Int): Expense? {
+        // Asumo que tu ExpenseDao ya tiene un método para obtener una entidad por ID de forma síncrona
+        return expenseDao.getExpenseById(expenseId)?.toModel()
+    }
+
+    // 2. Implementación Transaccional de Modificación (Update)
+    override suspend fun updateExpenseAndBudgetBalance(
+        updatedExpense: Expense,
+        budgetId: Int,
+        montoAdjustment: Double // Esta es la diferencia neta (New - Old)
+    ): Boolean = try {
+        database.withTransaction {
+            expenseDao.updateExpense(updatedExpense.toEntity())
+
+            // 🚨 CAMBIO AQUÍ: Llamamos a la función con '+' en el DAO
+            budgetDao.adjustMontoGastado(budgetId, montoAdjustment)
+        }
+        true
+    } catch (e: Exception) { false }
+
+    override suspend fun deleteExpenseAndRevertBalance(
+        expenseId: Int,
+        budgetId: Int,
+        montoToRevert: Double
+    ): Boolean = try {
+        database.withTransaction {
+            expenseDao.deleteExpenseById(expenseId)
+            budgetDao.adjustMontoGastado(budgetId, -montoToRevert)
+        }
+        true
+    } catch (e: Exception) { false }
 
     override suspend fun addExpense(expense: Expense): Long {
         val expenseEntity = expense.toEntity()
