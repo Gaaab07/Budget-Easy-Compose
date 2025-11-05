@@ -36,6 +36,8 @@ interface ExpenseDao {
 
     @Query("SELECT * FROM expenses ORDER BY fecha DESC LIMIT :limit")
     suspend fun getRecentExpenses(limit: Int = 10): List<ExpenseEntity>
+    @Query("DELETE FROM expenses WHERE id = :expenseId")
+    suspend fun deleteExpenseById(expenseId: Int)
 
     @Query("""
     SELECT e.* FROM expenses e

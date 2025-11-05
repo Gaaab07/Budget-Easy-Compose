@@ -4,8 +4,22 @@ import com.budgeteasy.domain.model.Expense
 import kotlinx.coroutines.flow.Flow
 
 interface IExpenseRepository {
+
+
     suspend fun addExpense(expense: Expense): Long
     suspend fun getExpenseById(expenseId: Int): Expense?
+    suspend fun getExpenseByIdSingle(expenseId: Int): Expense?
+    suspend fun updateExpenseAndBudgetBalance(
+        updatedExpense: Expense,
+        budgetId: Int,
+        montoAdjustment: Double // La diferencia neta (New - Old)
+    ): Boolean
+    suspend fun deleteExpenseAndRevertBalance(
+        expenseId: Int,
+        budgetId: Int,
+        montoToRevert: Double
+    ): Boolean
+
     fun getExpensesByBudget(budgetId: Int): Flow<List<Expense>>
     suspend fun updateExpense(expense: Expense)
     suspend fun deleteExpense(expense: Expense)

@@ -4,7 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.budgeteasy.domain.model.Expense
+import com.budgeteasy.domain.repository.IExpenseRepository // Usar tu interfaz
 import com.budgeteasy.domain.usecase.expense.DeleteExpenseUseCase
+import com.budgeteasy.domain.usecase.expense.UpdateExpenseUseCase // 👈 NUEVA IMPORTACIÓN
 import com.budgeteasy.domain.usecase.expense.GetExpensesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,8 +16,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ExpenseDetailViewModel @Inject constructor(
+    private val expenseRepository: IExpenseRepository, // Usar tu interfaz
     private val getExpensesUseCase: GetExpensesUseCase,
     private val deleteExpenseUseCase: DeleteExpenseUseCase,
+    private val updateExpenseUseCase: UpdateExpenseUseCase, // 👈 AÑADIDO
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -57,12 +61,21 @@ class ExpenseDetailViewModel @Inject constructor(
     }
 
     fun deleteExpense() {
+        // Obtenemos el ID de forma segura. Si _expense.value es null, salimos.
+        val expenseIdToDelete = _expense.value?.id ?: return
+
         viewModelScope.launch {
             try {
                 _isDeleting.value = true
-                _expense.value?.let { expense ->
-                    deleteExpenseUseCase(expense)
-                    _deleteSuccess.value = true
+
+                // 1. LLAMA al UseCase con el ID (como definimos en el Paso 1.1)
+                val wasDeleted = deleteExpenseUseCase(expenseIdToDelete)
+
+                if (wasDeleted) {
+                    _deleteSuccess.value = true // Activa la navegación de vuelta
+                    // También podrías emitir un mensaje a un SharedFlow aquí
+                } else {
+                    _error.value = "Error al eliminar y ajustar el balance."
                 }
             } catch (e: Exception) {
                 _error.value = e.message ?: "Error al eliminar el gasto"
