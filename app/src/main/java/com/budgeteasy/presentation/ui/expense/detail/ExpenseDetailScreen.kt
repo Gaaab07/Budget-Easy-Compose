@@ -1,6 +1,7 @@
 package com.budgeteasy.presentation.ui.expense.detail
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -18,15 +19,29 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.budgeteasy.presentation.ui.expense.detail.ExpenseDetailEvent
-import com.budgeteasy.presentation.ui.expense.detail.components.CustomOutlinedTextField // <<-- IMPORTACIÓN CORRECTA
+import com.budgeteasy.presentation.ui.expense.detail.components.CustomOutlinedTextField
 import kotlinx.coroutines.flow.collectLatest
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.ArrowDropDown
 
+// Deficiones de Category y CATEGORIES, copiadas de AddExpenseScreen.kt, para que el selector funcione.
+data class Category(val name: String, val icon: String)
+
+private val CATEGORIES = listOf(
+    Category("Restaurantes", "🍽️"),
+    Category("Compras", "🛍️"),
+    Category("Transporte", "🚗"),
+    Category("Entretenimiento", "🎵"),
+    Category("Salud", "💊"),
+    Category("Educación", "📖"),
+    Category("Servicios", "🔨"),
+    Category("Hogar", "🏠"),
+    Category("Otros", "💰")
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,6 +70,18 @@ fun ExpenseDetailScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     var showDeleteConfirmationDialog by remember { mutableStateOf(false) }
 
+    // --- ESTADOS LOCALES PARA EL SELECTOR (CORRECCIÓN CLAVE) ---
+    var expandedDropdown by remember { mutableStateOf(false) }
+    // Inicializar selectedCategory con la categoría actual del gasto, o la primera si no se encuentra
+    var selectedCategory by remember {
+        mutableStateOf(CATEGORIES.find { it.name == expenseCategory } ?: CATEGORIES[0])
+    }
+
+    // Sincronizar selectedCategory cuando el ViewModel actualice expenseCategory (ej: al cargar el gasto)
+    LaunchedEffect(expenseCategory) {
+        selectedCategory = CATEGORIES.find { it.name == expenseCategory } ?: CATEGORIES[0]
+    }
+
     // --- EFECTOS LATERALES ---
 
     // 1. Manejo de mensajes (SnackBar)
@@ -70,8 +97,6 @@ fun ExpenseDetailScreen(
 
     // 2. Navegación de éxito (Eliminación/Modificación)
     LaunchedEffect(deleteSuccess, isUpdateLoading) {
-        // La navegación se gestiona internamente en el ViewModel,
-        // pero verificamos el éxito de la eliminación.
         if (deleteSuccess) {
             navController.popBackStack()
         }
@@ -79,7 +104,6 @@ fun ExpenseDetailScreen(
 
     // 3. Manejar la navegación hacia atrás con detección de cambios
     val onBack: () -> Unit = {
-        // Llama a la lógica del ViewModel para verificar si hay cambios no guardados
         viewModel.handleBackNavigation { navController.popBackStack() }
     }
 
@@ -150,7 +174,8 @@ fun ExpenseDetailScreen(
                         onValueChange = viewModel::onMontoChange,
                         label = "Monto (S/.)",
                         keyboardType = KeyboardType.Decimal,
-                        readOnly = isUpdateLoading
+                        readOnly = isUpdateLoading,
+                        useDecimalFormat = true
                     )
 
                     // Display fijo del monto original (opcional, para visualización de la diferencia)
@@ -165,14 +190,91 @@ fun ExpenseDetailScreen(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // 3. Categoría (Campo Editable)
-                    CustomOutlinedTextField(
-                        value = expenseCategory,
-                        onValueChange = viewModel::onCategoryChange,
-                        label = "Categoría",
-                        readOnly = isUpdateLoading
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    // 3. Categoría (¡SELECTOR DE CATEGORÍA CORREGIDO!)
+                    // ESTO REEMPLAZA TU ANTERIOR CustomOutlinedTextField
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surface
+                        ),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { expandedDropdown = true }
+                                .padding(16.dp)
+                        ) {
+                            Text(
+                                text = "Categoría",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    Text(
+                                        text = selectedCategory.icon,
+                                        fontSize = 28.sp
+                                    )
+                                    Text(
+                                        text = selectedCategory.name,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
+                                Icon(
+                                    imageVector = Icons.Default.ArrowDropDown,
+                                    contentDescription = "Seleccionar categoría",
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+
+                            // Dropdown Menu
+                            DropdownMenu(
+                                expanded = expandedDropdown,
+                                onDismissRequest = { expandedDropdown = false },
+                                modifier = Modifier.fillMaxWidth(0.85f)
+                            ) {
+                                CATEGORIES.forEach { category ->
+                                    DropdownMenuItem(
+                                        text = {
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                            ) {
+                                                Text(
+                                                    text = category.icon,
+                                                    fontSize = 24.sp
+                                                )
+                                                Text(
+                                                    text = category.name,
+                                                    style = MaterialTheme.typography.bodyLarge
+                                                )
+                                            }
+                                        },
+                                        onClick = {
+                                            selectedCategory = category
+                                            // Llama al ViewModel con el nuevo nombre de la categoría
+                                            viewModel.onCategoryChange(category.name)
+                                            expandedDropdown = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
 
                     // 4. Nota (Campo Editable)
                     CustomOutlinedTextField(
