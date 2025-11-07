@@ -117,4 +117,10 @@
     <string name="budget_warning">Warning! Low budget remaining</string>
     <string name="budget_exceeded">Budget exceeded!</string>
 
+    <string name="biometric_login">Login with fingerprint</string>
+    <string name="biometric_title">Biometric Authentication</string>
+    <string name="biometric_subtitle">Use your fingerprint or face recognition</string>
+    <string name="biometric_error">Biometric authentication error</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="or">OR</string>
 </resources>

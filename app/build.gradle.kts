@@ -51,7 +51,13 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    // 📊 Para gráficos (Vico - más moderno que MPAndroidChart)
+    implementation("com.patrykandpatrick.vico:compose:1.13.1")
+    implementation("com.patrykandpatrick.vico:compose-m3:1.13.1")
+    implementation("com.patrykandpatrick.vico:core:1.13.1")
 
+    // 🔐 Para autenticación biométrica
+    implementation("androidx.biometric:biometric:1.2.0-alpha05")
     // ⭐ Material Icons Extended (NUEVO)
     implementation("androidx.compose.material:material-icons-extended:1.7.5")
 

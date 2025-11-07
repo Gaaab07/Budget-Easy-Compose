@@ -119,4 +119,12 @@
     <string name="budget_warning">¡Cuidado! Te queda poco presupuesto</string>
     <string name="budget_exceeded">¡Presupuesto superado!</string>
 
+    <!-- Biometric Authentication -->
+    <string name="biometric_login">Iniciar sesión con huella</string>
+    <string name="biometric_title">Autenticación Biométrica</string>
+    <string name="biometric_subtitle">Usa tu huella digital o reconocimiento facial</string>
+    <string name="biometric_error">Error de autenticación biométrica</string>
+    <string name="forgot_password">¿Olvidó su contraseña?</string>
+    <string name="or">O</string>
+
 </resources>

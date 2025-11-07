@@ -49,4 +49,8 @@ sealed class Screen(val route: String) {
     data object Settings : Screen("settings") {
         // Sin parámetros porque no necesita userId
     }
+    // presentation/ui/navigation/Screen.kt
+    object Statistics : Screen("statistics/{userId}") {
+        fun createRoute(userId: Int) = "statistics/$userId"
+    }
 }

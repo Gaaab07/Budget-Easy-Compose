@@ -9,7 +9,7 @@ import androidx.navigation.navArgument
 import com.budgeteasy.presentation.ui.splash.SplashScreen
 import com.budgeteasy.presentation.ui.auth.login.LoginScreen
 import com.budgeteasy.presentation.ui.auth.register.RegisterScreen
-import com.budgeteasy.presentation.ui.auth.forgotpassword.ForgotPasswordScreen // <-- ¡IMPORTACIÓN AÑADIDA!
+import com.budgeteasy.presentation.ui.auth.forgotpassword.ForgotPasswordScreen
 import com.budgeteasy.presentation.ui.dashboard.DashboardScreen
 import com.budgeteasy.presentation.ui.budget.list.BudgetListScreen
 import com.budgeteasy.presentation.ui.budget.create.CreateBudgetScreen
@@ -19,6 +19,7 @@ import com.budgeteasy.presentation.ui.expense.detail.ExpenseDetailScreen
 import com.budgeteasy.presentation.ui.expense.all.AllExpensesScreen
 import com.budgeteasy.presentation.ui.profile.ProfileScreen
 import com.budgeteasy.presentation.ui.settings.SettingsScreen
+import com.budgeteasy.presentation.ui.statistics.StatisticsScreen // ⭐ AGREGAR ESTE IMPORT
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -41,7 +42,7 @@ fun NavGraph(navController: NavHostController) {
             RegisterScreen(navController = navController)
         }
 
-        // FORGOT PASSWORD <-- ¡RUTA AÑADIDA!
+        // FORGOT PASSWORD
         composable(Screen.ForgotPassword.route) {
             ForgotPasswordScreen(navController = navController)
         }
@@ -167,6 +168,16 @@ fun NavGraph(navController: NavHostController) {
             )
         }
 
+        // ⭐ STATISTICS - Estadísticas de gastos
+        composable(
+            route = Screen.Statistics.route,
+            arguments = listOf(navArgument("userId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getInt("userId") ?: 0
+            StatisticsScreen(navController = navController, userId = userId)
+        }
+
+        // SETTINGS
         composable(Screen.Settings.route) {
             SettingsScreen(navController = navController)
         }

@@ -142,7 +142,7 @@ fun AllExpensesScreen(
                     }
                 }
                 else -> {
-                    // Resumen Total
+                    // ⭐ CARD DE RESUMEN CON BOTÓN DE ESTADÍSTICAS
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -152,33 +152,73 @@ fun AllExpensesScreen(
                         ),
                         shape = RoundedCornerShape(16.dp)
                     ) {
-                        Row(
+                        Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(20.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                                .padding(20.dp)
                         ) {
-                            Column {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column {
+                                    Text(
+                                        text = if (currentLanguage == AppLanguage.SPANISH)
+                                            "Total Gastado"
+                                        else
+                                            "Total Spent",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                    Text(
+                                        text = "S/.${String.format("%.2f", expenses.sumOf { it.monto })}",
+                                        style = MaterialTheme.typography.headlineMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                    Text(
+                                        text = if (currentLanguage == AppLanguage.SPANISH)
+                                            "${expenses.size} gastos"
+                                        else
+                                            "${expenses.size} expenses",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                }
                                 Text(
-                                    text = if (currentLanguage == AppLanguage.SPANISH)
-                                        "Total Gastado"
-                                    else
-                                        "Total Spent",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
-                                Text(
-                                    text = "S/.${String.format("%.2f", expenses.sumOf { it.monto })}",
-                                    style = MaterialTheme.typography.headlineMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                    text = "💰",
+                                    fontSize = 48.sp
                                 )
                             }
-                            Text(
-                                text = "💰",
-                                fontSize = 48.sp
-                            )
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            // ⭐ BOTÓN DE ESTADÍSTICAS
+                            Button(
+                                onClick = {
+                                    navController.navigate(Screen.Statistics.createRoute(userId))
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = PrimaryGreen
+                                ),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Text(
+                                    text = "📊",
+                                    fontSize = 20.sp
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = if (currentLanguage == AppLanguage.SPANISH)
+                                        "Ver Estadísticas Detalladas"
+                                    else
+                                        "View Detailed Statistics",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
                         }
                     }
 
@@ -266,7 +306,7 @@ fun ExpenseItemCard(
                         text = expense.nombre,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSurface // 🔥 Adaptable a dark mode
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = dateFormat.format(Date(expense.fecha)),
