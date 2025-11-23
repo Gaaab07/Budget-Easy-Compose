@@ -53,4 +53,7 @@ sealed class Screen(val route: String) {
     object Statistics : Screen("statistics/{userId}") {
         fun createRoute(userId: Int) = "statistics/$userId"
     }
+    data object EditBudget : Screen("edit_budget/{budgetId}") {
+        fun createRoute(budgetId: Int) = "edit_budget/$budgetId"
+    }
 }

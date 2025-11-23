@@ -1,8 +1,10 @@
+// presentation/ui/budget/list/BudgetListViewModel.kt
 package com.budgeteasy.presentation.ui.budget.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.budgeteasy.domain.model.Budget
+import com.budgeteasy.domain.usecase.budget.DeleteBudgetUseCase
 import com.budgeteasy.domain.usecase.budget.GetBudgetsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,12 +15,15 @@ import javax.inject.Inject
 data class BudgetListUiState(
     val budgets: List<Budget> = emptyList(),
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val deleteSuccess: Boolean = false,
+    val deletingBudgetId: Int? = null
 )
 
 @HiltViewModel
 class BudgetListViewModel @Inject constructor(
-    private val getBudgetsUseCase: GetBudgetsUseCase
+    private val getBudgetsUseCase: GetBudgetsUseCase,
+    private val deleteBudgetUseCase: DeleteBudgetUseCase // ⭐ NUEVO
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(BudgetListUiState())
@@ -44,7 +49,34 @@ class BudgetListViewModel @Inject constructor(
         }
     }
 
+    // ⭐ NUEVA FUNCIÓN: Eliminar presupuesto
+    fun deleteBudget(budget: Budget) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(
+                deletingBudgetId = budget.id,
+                errorMessage = null
+            )
+
+            try {
+                deleteBudgetUseCase(budget)
+                _uiState.value = _uiState.value.copy(
+                    deletingBudgetId = null,
+                    deleteSuccess = true
+                )
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    deletingBudgetId = null,
+                    errorMessage = "Error al eliminar: ${e.message}"
+                )
+            }
+        }
+    }
+
     fun clearErrorMessage() {
         _uiState.value = _uiState.value.copy(errorMessage = null)
+    }
+
+    fun clearDeleteSuccess() {
+        _uiState.value = _uiState.value.copy(deleteSuccess = false)
     }
 }
