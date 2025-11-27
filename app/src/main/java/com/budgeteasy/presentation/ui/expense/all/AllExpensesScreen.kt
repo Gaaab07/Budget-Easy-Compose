@@ -194,7 +194,7 @@ fun AllExpensesScreen(
 
                             Spacer(modifier = Modifier.height(16.dp))
 
-                            // ⭐ BOTÓN DE ESTADÍSTICAS
+
                             Button(
                                 onClick = {
                                     navController.navigate(Screen.Statistics.createRoute(userId))
@@ -222,7 +222,7 @@ fun AllExpensesScreen(
                         }
                     }
 
-                    // Lista de gastos
+
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()

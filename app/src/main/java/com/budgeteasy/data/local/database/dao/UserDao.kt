@@ -13,7 +13,7 @@ interface UserDao {
     @Insert
     suspend fun insertUser(user: UserEntity): Long
 
-    // 🚀 CAMBIO CLAVE AQUÍ: Retorna Int (número de filas afectadas)
+
     @Update
     suspend fun updateUser(user: UserEntity): Int
 

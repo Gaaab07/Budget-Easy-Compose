@@ -44,7 +44,7 @@ fun RegisterScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        // Título
+
         Text(
             text = stringResource(R.string.register),
             style = MaterialTheme.typography.displaySmall,
@@ -52,7 +52,7 @@ fun RegisterScreen(
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        // Nombre TextField
+
         TextField(
             value = uiState.nombre,
             onValueChange = { viewModel.onNombreChanged(it) },
@@ -63,7 +63,7 @@ fun RegisterScreen(
             singleLine = true
         )
 
-        // Apellidos TextField
+
         TextField(
             value = uiState.apellidos,
             onValueChange = { viewModel.onApellidosChanged(it) },
@@ -74,7 +74,6 @@ fun RegisterScreen(
             singleLine = true
         )
 
-        // Email TextField
         TextField(
             value = uiState.email,
             onValueChange = { viewModel.onEmailChanged(it) },
@@ -85,7 +84,7 @@ fun RegisterScreen(
             singleLine = true
         )
 
-        // Contraseña TextField
+
         TextField(
             value = uiState.contrasena,
             onValueChange = { viewModel.onContrasenaChanged(it) },
@@ -97,7 +96,7 @@ fun RegisterScreen(
             visualTransformation = PasswordVisualTransformation()
         )
 
-        // Confirmar Contraseña TextField
+
         TextField(
             value = uiState.confirmContrasena,
             onValueChange = { viewModel.onConfirmContrasenaChanged(it) },
@@ -109,7 +108,7 @@ fun RegisterScreen(
             visualTransformation = PasswordVisualTransformation()
         )
 
-        // Teléfono TextField
+
         TextField(
             value = uiState.numeroDeTelefono,
             onValueChange = { viewModel.onNumeroDeTelefonoChanged(it) },
@@ -120,7 +119,7 @@ fun RegisterScreen(
             singleLine = true
         )
 
-        // Selector de Idioma
+
         Card(
             modifier = Modifier
                 .fillMaxWidth()

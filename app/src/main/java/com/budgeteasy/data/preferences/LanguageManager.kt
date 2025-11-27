@@ -32,20 +32,20 @@ class LanguageManager @Inject constructor(
 ) {
     private val LANGUAGE_KEY = stringPreferencesKey("app_language")
 
-    // Leer idioma guardado
+
     val appLanguage: Flow<AppLanguage> = context.languageDataStore.data
         .map { preferences ->
             AppLanguage.fromCode(preferences[LANGUAGE_KEY] ?: AppLanguage.SPANISH.code)
         }
 
-    // Guardar idioma
+
     suspend fun setLanguage(language: AppLanguage) {
         context.languageDataStore.edit { preferences ->
             preferences[LANGUAGE_KEY] = language.code
         }
     }
 
-    // Aplicar idioma al contexto
+
     fun applyLanguage(context: Context, language: AppLanguage): Context {
         val locale = language.toLocale()
         Locale.setDefault(locale)

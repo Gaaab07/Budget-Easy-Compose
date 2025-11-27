@@ -26,7 +26,7 @@ class ProfileViewModel @Inject constructor(
     private val _user = MutableStateFlow<User?>(null)
     val user: StateFlow<User?> = _user
 
-    // Observar el tema actual
+
     val currentTheme: StateFlow<ThemeMode> = themeManager.themeMode
         .stateIn(
             scope = viewModelScope,
@@ -34,7 +34,7 @@ class ProfileViewModel @Inject constructor(
             initialValue = ThemeMode.LIGHT
         )
 
-    // Observar el idioma actual
+
     val currentLanguage: StateFlow<AppLanguage> = languageManager.appLanguage
         .stateIn(
             scope = viewModelScope,
@@ -53,12 +53,12 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    // Cambiar el tema
+
     suspend fun setThemeMode(mode: ThemeMode) {
         themeManager.setThemeMode(mode)
     }
 
-    // Cambiar el idioma
+
     suspend fun setLanguage(language: AppLanguage) {
         languageManager.setLanguage(language)
     }

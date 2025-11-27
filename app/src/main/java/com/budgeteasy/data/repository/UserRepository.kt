@@ -50,21 +50,21 @@ class UserRepository @Inject constructor(
 
     override suspend fun updatePasswordByEmail(email: String, newPassword: String): Boolean {
         return try {
-            // a) Busca al usuario por su email
+
             val user = userDao.getUserByEmail(email)
 
             if (user != null) {
-                // b) Si el usuario existe, actualiza su contraseña
+
                 val updatedRows = userDao.updateUser(user.copy(contrasena = newPassword))
 
-                // 🚀 CAMBIO CLAVE AQUÍ: Retorna 'true' SÓLO si se actualizó 1 fila.
-                updatedRows > 0 // Retorna true si updatedRows es 1 o más, indicando éxito
+
+                updatedRows > 0
             } else {
-                // c) Si el usuario no existe, retorna 'false'
+
                 false
             }
         } catch (e: Exception) {
-            // d) Si hay cualquier otro error, retorna 'false'
+
             e.printStackTrace()
             false
         }

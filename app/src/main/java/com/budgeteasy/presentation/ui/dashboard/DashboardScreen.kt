@@ -138,7 +138,7 @@ private fun DashboardContent(
             )
         }
 
-        // Presupuesto destacado
+
         if (selectedBudget != null) {
             item {
                 Spacer(modifier = Modifier.height(16.dp))
@@ -151,7 +151,7 @@ private fun DashboardContent(
             }
         }
 
-        // Título: Gastos Recientes
+
         item {
             Spacer(modifier = Modifier.height(24.dp))
             Row(
@@ -178,7 +178,7 @@ private fun DashboardContent(
             Spacer(modifier = Modifier.height(12.dp))
         }
 
-        // Gastos recientes
+
         if (recentExpenses.isEmpty()) {
             item {
                 Text(
@@ -203,7 +203,7 @@ private fun DashboardContent(
             }
         }
 
-        // Botón agregar gasto
+
         item {
             Spacer(modifier = Modifier.height(24.dp))
             Button(
@@ -238,7 +238,7 @@ private fun DashboardContent(
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        // Título: Mis Presupuestos
+
         item {
             Text(
                 text = stringResource(R.string.my_budgets),
@@ -250,7 +250,7 @@ private fun DashboardContent(
             Spacer(modifier = Modifier.height(12.dp))
         }
 
-        // Lista de presupuestos
+
         items(budgets) { budget ->
             BudgetDashboardCard(
                 budget = budget,
@@ -267,7 +267,7 @@ private fun DashboardContent(
             )
         }
 
-        // Botón crear presupuesto
+
         item {
             Spacer(modifier = Modifier.height(16.dp))
             Button(
@@ -318,7 +318,7 @@ private fun DashboardHeader(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column {
-            // ✅ CAMBIO PRINCIPAL: Título dinámico
+
             Text(
                 text = if (selectedBudget != null) {
                     "${stringResource(R.string.budget_for)} ${selectedBudget.nombre.uppercase()}"
@@ -379,7 +379,7 @@ private fun MainBudgetCard(
 
     val porcentaje = (progress * 100).toInt()
 
-    // 🚨 Detectar si está en zona de peligro (≥90%)
+
     val isAlmostOver = porcentaje >= 90
     val isOverBudget = porcentaje >= 100
 

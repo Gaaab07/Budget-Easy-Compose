@@ -37,7 +37,7 @@ class LoginViewModel @Inject constructor(
     fun login() {
         val currentState = _uiState.value
 
-        // Validaciones básicas
+
         if (currentState.email.isEmpty()) {
             _uiState.value = currentState.copy(errorMessage = "El email no puede estar vacío")
             return

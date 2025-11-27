@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.ArrowDropDown
 
-// Deficiones de Category y CATEGORIES, copiadas de AddExpenseScreen.kt, para que el selector funcione.
+
 data class Category(val name: String, val icon: String)
 
 private val CATEGORIES = listOf(
@@ -61,7 +61,7 @@ fun ExpenseDetailScreen(
     val isModified by viewModel.isModified.collectAsStateWithLifecycle()
     val showUnsavedChangesDialog by viewModel.showUnsavedChangesDialog.collectAsStateWithLifecycle()
 
-    // --- ESTADOS DE EDICIÓN ---
+
     val expenseName by viewModel.expenseName.collectAsStateWithLifecycle()
     val expenseMonto by viewModel.expenseMonto.collectAsStateWithLifecycle()
     val expenseCategory by viewModel.expenseCategory.collectAsStateWithLifecycle()
@@ -70,21 +70,21 @@ fun ExpenseDetailScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     var showDeleteConfirmationDialog by remember { mutableStateOf(false) }
 
-    // --- ESTADOS LOCALES PARA EL SELECTOR (CORRECCIÓN CLAVE) ---
+
     var expandedDropdown by remember { mutableStateOf(false) }
-    // Inicializar selectedCategory con la categoría actual del gasto, o la primera si no se encuentra
+
     var selectedCategory by remember {
         mutableStateOf(CATEGORIES.find { it.name == expenseCategory } ?: CATEGORIES[0])
     }
 
-    // Sincronizar selectedCategory cuando el ViewModel actualice expenseCategory (ej: al cargar el gasto)
+
     LaunchedEffect(expenseCategory) {
         selectedCategory = CATEGORIES.find { it.name == expenseCategory } ?: CATEGORIES[0]
     }
 
-    // --- EFECTOS LATERALES ---
 
-    // 1. Manejo de mensajes (SnackBar)
+
+
     LaunchedEffect(viewModel.eventFlow) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
@@ -95,14 +95,14 @@ fun ExpenseDetailScreen(
         }
     }
 
-    // 2. Navegación de éxito (Eliminación/Modificación)
+
     LaunchedEffect(deleteSuccess, isUpdateLoading) {
         if (deleteSuccess) {
             navController.popBackStack()
         }
     }
 
-    // 3. Manejar la navegación hacia atrás con detección de cambios
+
     val onBack: () -> Unit = {
         viewModel.handleBackNavigation { navController.popBackStack() }
     }
@@ -149,7 +149,7 @@ fun ExpenseDetailScreen(
                 }
             }
             else -> {
-                // --- CONTENIDO EDITABLE ---
+
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -159,7 +159,7 @@ fun ExpenseDetailScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
-                    // 1. Nombre (Campo Editable)
+
                     CustomOutlinedTextField(
                         value = expenseName,
                         onValueChange = viewModel::onNameChange,
@@ -168,7 +168,7 @@ fun ExpenseDetailScreen(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // 2. Monto (Campo Editable)
+
                     CustomOutlinedTextField(
                         value = expenseMonto,
                         onValueChange = viewModel::onMontoChange,
@@ -178,7 +178,7 @@ fun ExpenseDetailScreen(
                         useDecimalFormat = true
                     )
 
-                    // Display fijo del monto original (opcional, para visualización de la diferencia)
+
                     Text(
                         text = "Original: S/.${String.format("%.2f", expense!!.monto)}",
                         fontSize = 12.sp,
@@ -190,8 +190,7 @@ fun ExpenseDetailScreen(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // 3. Categoría (¡SELECTOR DE CATEGORÍA CORREGIDO!)
-                    // ESTO REEMPLAZA TU ANTERIOR CustomOutlinedTextField
+
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -241,7 +240,7 @@ fun ExpenseDetailScreen(
                                 )
                             }
 
-                            // Dropdown Menu
+
                             DropdownMenu(
                                 expanded = expandedDropdown,
                                 onDismissRequest = { expandedDropdown = false },
@@ -276,7 +275,7 @@ fun ExpenseDetailScreen(
                         }
                     }
 
-                    // 4. Nota (Campo Editable)
+
                     CustomOutlinedTextField(
                         value = expenseNota,
                         onValueChange = viewModel::onNotaChange,
@@ -287,7 +286,7 @@ fun ExpenseDetailScreen(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // 5. Fecha (Campo Fijo)
+
                     OutlinedTextField(
                         value = formatDate(expense!!.fecha),
                         onValueChange = {},
@@ -307,10 +306,10 @@ fun ExpenseDetailScreen(
 
                     Spacer(modifier = Modifier.weight(1f))
 
-                    // --- BOTONES DE ACCIÓN ---
+
                     Button(
                         onClick = viewModel::updateExpense,
-                        // El botón se habilita solo si hay cambios y no está cargando
+
                         enabled = isModified && !isUpdateLoading && !isDeleting,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -347,9 +346,7 @@ fun ExpenseDetailScreen(
         }
     }
 
-    // --- DIÁLOGOS ---
 
-    // 1. Diálogo de pérdida de cambios
     if (showUnsavedChangesDialog) {
         AlertDialog(
             onDismissRequest = viewModel::cancelDiscard,
@@ -368,7 +365,7 @@ fun ExpenseDetailScreen(
         )
     }
 
-    // 2. Diálogo de confirmación de eliminación
+
     if (showDeleteConfirmationDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirmationDialog = false },
@@ -403,7 +400,7 @@ fun ExpenseDetailScreen(
     }
 }
 
-// Función de formato de fecha (Mantenida)
+
 private fun formatDate(timestamp: Long): String {
     val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm a", Locale("es", "PE"))
     return sdf.format(Date(timestamp))

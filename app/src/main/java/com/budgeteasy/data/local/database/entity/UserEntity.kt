@@ -1,4 +1,4 @@
-// UserEntity.kt
+
 package com.budgeteasy.data.local.database.entity
 
 import androidx.room.Entity

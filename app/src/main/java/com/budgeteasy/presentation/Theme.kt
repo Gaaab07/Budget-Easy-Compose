@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-// Colores modo claro
+
 private val LightColorScheme = lightColorScheme(
     primary = PrimaryGreen,
     secondary = SecondaryGrey,
@@ -26,7 +26,7 @@ private val LightColorScheme = lightColorScheme(
     onSurface = Color(0xFF1C1B1F),
 )
 
-// Colores modo oscuro
+
 private val DarkColorScheme = darkColorScheme(
     primary = PrimaryGreen,
     secondary = Color(0xFF625B71),
@@ -44,7 +44,7 @@ private val DarkColorScheme = darkColorScheme(
 @Composable
 fun BudgetEasyTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = false, // Dynamic color disponible en Android 12+
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

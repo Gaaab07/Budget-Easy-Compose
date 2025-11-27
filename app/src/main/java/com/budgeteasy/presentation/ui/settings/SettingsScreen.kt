@@ -76,7 +76,7 @@ fun SettingsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Sección: Apariencia
+
             Text(
                 text = if (currentLanguage == AppLanguage.SPANISH)
                     "Apariencia"
@@ -97,7 +97,7 @@ fun SettingsScreen(
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-            // Sección: Idioma
+
             Text(
                 text = if (currentLanguage == AppLanguage.SPANISH)
                     "Idioma"
@@ -113,14 +113,14 @@ fun SettingsScreen(
                 onLanguageSelected = { language ->
                     viewModel.setLanguage(language)
 
-                    // 🔥 REINICIAR LA ACTIVIDAD PARA APLICAR EL IDIOMA
+
                     (context as? Activity)?.recreate()
                 }
             )
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-            // Sección: Cuenta
+
             Text(
                 text = if (currentLanguage == AppLanguage.SPANISH)
                     "Cuenta"
@@ -131,7 +131,7 @@ fun SettingsScreen(
                 color = MaterialTheme.colorScheme.onBackground
             )
 
-            // Botón Cerrar Sesión
+
             Button(
                 onClick = { showLogoutDialog = true },
                 modifier = Modifier
@@ -160,18 +160,18 @@ fun SettingsScreen(
         }
     }
 
-    // Dialog de confirmación
+
     if (showLogoutDialog) {
         AlertDialog(
             onDismissRequest = { showLogoutDialog = false },
-            containerColor = MaterialTheme.colorScheme.surface, // 🔥 Fondo adaptable
+            containerColor = MaterialTheme.colorScheme.surface,
             title = {
                 Text(
                     text = if (currentLanguage == AppLanguage.SPANISH)
                         "Cerrar Sesión"
                     else
                         "Logout",
-                    color = MaterialTheme.colorScheme.onSurface // 🔥 Color adaptable
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             },
             text = {
@@ -180,7 +180,7 @@ fun SettingsScreen(
                         "¿Estás seguro de que deseas cerrar sesión?"
                     else
                         "Are you sure you want to logout?",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant // 🔥 Color adaptable
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
             confirmButton = {
@@ -208,7 +208,7 @@ fun SettingsScreen(
                             "Cancelar"
                         else
                             "Cancel",
-                        color = MaterialTheme.colorScheme.primary // 🔥 Color adaptable
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -250,7 +250,7 @@ fun ThemeSelector(
                         "Theme",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurface // 🔥 Color adaptable
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
 

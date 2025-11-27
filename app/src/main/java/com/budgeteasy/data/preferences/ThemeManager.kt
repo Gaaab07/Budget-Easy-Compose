@@ -30,13 +30,13 @@ class ThemeManager @Inject constructor(
 ) {
     private val THEME_MODE_KEY = intPreferencesKey("theme_mode")
 
-    // Leer el modo de tema
+
     val themeMode: Flow<ThemeMode> = context.dataStore.data
         .map { preferences ->
             ThemeMode.fromValue(preferences[THEME_MODE_KEY] ?: ThemeMode.LIGHT.value) // ✅ LIGHT en vez de SYSTEM
         }
 
-    // Guardar el modo de tema
+
     suspend fun setThemeMode(mode: ThemeMode) {
         context.dataStore.edit { preferences ->
             preferences[THEME_MODE_KEY] = mode.value

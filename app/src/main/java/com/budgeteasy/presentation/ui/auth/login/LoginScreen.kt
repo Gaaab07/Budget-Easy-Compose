@@ -35,7 +35,7 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Título
+
         Text(
             text = stringResource(R.string.app_name),
             style = MaterialTheme.typography.displaySmall,
@@ -51,7 +51,7 @@ fun LoginScreen(
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        // Email TextField
+
         OutlinedTextField(
             value = uiState.email,
             onValueChange = { viewModel.onEmailChanged(it) },
@@ -74,7 +74,7 @@ fun LoginScreen(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
         )
 
-        // Contraseña TextField
+
         OutlinedTextField(
             value = uiState.contrasena,
             onValueChange = { viewModel.onContrasenaChanged(it) },
@@ -121,7 +121,7 @@ fun LoginScreen(
             )
         }
 
-        // Login Button
+
         Button(
             onClick = { viewModel.login() },
             modifier = Modifier
@@ -169,7 +169,7 @@ fun LoginScreen(
         }
     }
 
-    // Handle login success
+
     if (uiState.isLoginSuccessful && uiState.userId != null) {
         LaunchedEffect(Unit) {
             navController.navigate(Screen.Dashboard.createRoute(uiState.userId!!)) {

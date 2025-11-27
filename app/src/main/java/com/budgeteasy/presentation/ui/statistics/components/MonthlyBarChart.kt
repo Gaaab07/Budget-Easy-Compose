@@ -34,7 +34,7 @@ fun MonthlyBarChart(monthlyData: List<MonthlyData>) {
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            // ✅ CORRECCIÓN: Crear entradas correctamente
+
             val entries = monthlyData.mapIndexed { index, data ->
                 entryOf(index.toFloat(), data.total.toFloat())
             }

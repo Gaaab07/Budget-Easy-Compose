@@ -12,30 +12,30 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.budgeteasy.R
 
-// Sealed class para las rutas del Bottom Nav
+
 sealed class BottomNavItem(
     val route: String,
-    val titleResId: Int, // ✅ Ahora usa resource ID para traducciones
+    val titleResId: Int,
     val icon: ImageVector
 ) {
     object Home : BottomNavItem(
         route = "dashboard",
-        titleResId = R.string.nav_home, // "Inicio" / "Home"
+        titleResId = R.string.nav_home,
         icon = Icons.Default.Home
     )
     object Budgets : BottomNavItem(
         route = "budget_list",
-        titleResId = R.string.nav_budgets, // "Presupuestos" / "Budgets"
+        titleResId = R.string.nav_budgets,
         icon = Icons.Default.AccountBalanceWallet
     )
     object Expenses : BottomNavItem(
         route = "all_expenses",
-        titleResId = R.string.nav_expenses, // "Gastos" / "Expenses"
+        titleResId = R.string.nav_expenses,
         icon = Icons.Default.Receipt
     )
     object Profile : BottomNavItem(
         route = "profile",
-        titleResId = R.string.nav_profile, // "Perfil" / "Profile"
+        titleResId = R.string.nav_profile,
         icon = Icons.Default.Person
     )
 }
@@ -69,7 +69,7 @@ fun BottomNavigationBar(
                         contentDescription = stringResource(item.titleResId)
                     )
                 },
-                label = { Text(stringResource(item.titleResId)) }, // ✅ Traducción automática
+                label = { Text(stringResource(item.titleResId)) },
                 selected = selected,
                 onClick = {
                     if (!selected) {

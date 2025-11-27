@@ -27,7 +27,7 @@ class SettingsViewModel @Inject constructor(
 
     val currentLanguage: StateFlow<AppLanguage> = languageManager.appLanguage.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.Eagerly, // 🔥 CAMBIO: Eagerly en vez de WhileSubscribed
+        started = SharingStarted.Eagerly,
         initialValue = AppLanguage.SPANISH
     )
 

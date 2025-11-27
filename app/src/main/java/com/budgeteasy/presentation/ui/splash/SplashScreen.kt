@@ -22,7 +22,7 @@ fun SplashScreen(
     navController: NavController
 ) {
     LaunchedEffect(Unit) {
-        delay(2000) // Mostrar splash por 2 segundos
+        delay(2000)
         navController.navigate(Screen.Login.route) {
             popUpTo(Screen.Splash.route) { inclusive = true }
         }

@@ -12,7 +12,7 @@ interface IExpenseRepository {
     suspend fun updateExpenseAndBudgetBalance(
         updatedExpense: Expense,
         budgetId: Int,
-        montoAdjustment: Double // La diferencia neta (New - Old)
+        montoAdjustment: Double
     ): Boolean
     suspend fun deleteExpenseAndRevertBalance(
         expenseId: Int,
@@ -29,6 +29,6 @@ interface IExpenseRepository {
     suspend fun getRecentExpenses(limit: Int = 10): List<Expense>
     fun getRecentExpensesByUser(userId: Int, limit: Int = 5): Flow<List<Expense>>
 
-    // En IExpenseRepository.kt, agregar:
+
     fun getRecentExpensesByBudget(budgetId: Int, limit: Int): Flow<List<Expense>>
 }

@@ -14,7 +14,7 @@ fun getCurrentLanguage(): AppLanguage {
     return currentLanguage
 }
 
-// Función helper para traducir textos comunes
+
 fun translate(spanish: String, english: String, language: AppLanguage): String {
     return if (language == AppLanguage.SPANISH) spanish else english
 }

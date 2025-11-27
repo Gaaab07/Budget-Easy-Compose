@@ -22,7 +22,7 @@ import com.budgeteasy.presentation.theme.PrimaryGreen
 import java.text.SimpleDateFormat
 import java.util.*
 
-// Lista de categorías con sus iconos (usando emojis compatibles con Android)
+
 data class Category(val name: String, val icon: String)
 
 private val CATEGORIES = listOf(
@@ -59,7 +59,7 @@ fun AddExpenseScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        // Título
+
         Text(
             text = "Agregar Gasto",
             style = MaterialTheme.typography.displaySmall,
@@ -67,7 +67,7 @@ fun AddExpenseScreen(
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        // Nombre TextField
+
         TextField(
             value = uiState.nombre,
             onValueChange = { viewModel.onNombreChanged(it) },
@@ -79,7 +79,7 @@ fun AddExpenseScreen(
             singleLine = true
         )
 
-        // Monto TextField
+
         TextField(
             value = uiState.monto,
             onValueChange = {
@@ -96,7 +96,7 @@ fun AddExpenseScreen(
             singleLine = true
         )
 
-        // NUEVO: Selector de Categoría con Dropdown
+
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -146,7 +146,7 @@ fun AddExpenseScreen(
                     )
                 }
 
-                // Dropdown Menu
+
                 DropdownMenu(
                     expanded = expandedDropdown,
                     onDismissRequest = { expandedDropdown = false },
@@ -180,7 +180,7 @@ fun AddExpenseScreen(
             }
         }
 
-        // Fecha Button
+
         Button(
             onClick = { showDatePicker = !showDatePicker },
             modifier = Modifier
@@ -196,7 +196,7 @@ fun AddExpenseScreen(
             )
         }
 
-        // Nota TextField
+
         TextField(
             value = uiState.nota,
             onValueChange = { viewModel.onNotaChanged(it) },
@@ -209,7 +209,7 @@ fun AddExpenseScreen(
             maxLines = 4
         )
 
-        // Error message
+
         if (uiState.errorMessage != null) {
             Card(
                 modifier = Modifier
@@ -231,7 +231,7 @@ fun AddExpenseScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Add Button
+
         Button(
             onClick = {
                 viewModel.onCategoriaChanged(selectedCategory.name)
@@ -278,7 +278,7 @@ fun AddExpenseScreen(
         }
     }
 
-    // Handle add success - Navega de vuelta
+
     if (uiState.isAddSuccessful) {
         LaunchedEffect(Unit) {
             navController.popBackStack()

@@ -121,7 +121,7 @@ class RegisterViewModel @Inject constructor(
 
                 registerUserUseCase(newUser)
 
-                // Guardar idioma seleccionado en LanguageManager
+
                 languageManager.setLanguage(currentState.selectedLanguage)
 
                 _uiState.value = currentState.copy(

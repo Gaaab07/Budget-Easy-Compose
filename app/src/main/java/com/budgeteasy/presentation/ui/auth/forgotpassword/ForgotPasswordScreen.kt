@@ -24,7 +24,7 @@ fun ForgotPasswordScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    // 1. Manejar el éxito del restablecimiento para navegar de vuelta al Login
+
     if (uiState.isPasswordResetSuccessful) {
         LaunchedEffect(Unit) {
             // Navega de vuelta a la pantalla de Login y borra el historial
@@ -58,7 +58,7 @@ fun ForgotPasswordScreen(
                 EmailInputContent(
                     email = uiState.email,
                     onEmailChange = viewModel::onEmailChanged,
-                    onSendClick = viewModel::initiatePasswordReset, // Llama al nuevo método del ViewModel
+                    onSendClick = viewModel::initiatePasswordReset,
                     isLoading = uiState.isLoading,
                     errorMessage = uiState.errorMessage
                 )
@@ -85,7 +85,7 @@ fun ForgotPasswordScreen(
     }
 }
 
-// --- Funciones auxiliares Composable para la UI ---
+
 
 @Composable
 private fun EmailInputContent(
@@ -130,7 +130,7 @@ private fun EmailInputContent(
     }
 }
 
-// *** La función EmailSentContent fue eliminada ya que no se usa en este flujo directo. ***
+
 
 @Composable
 private fun ResetPasswordContent(

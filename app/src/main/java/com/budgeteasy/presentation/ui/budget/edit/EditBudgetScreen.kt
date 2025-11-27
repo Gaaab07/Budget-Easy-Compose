@@ -29,12 +29,12 @@ fun EditBudgetScreen(
     val uiState by viewModel.uiState.collectAsState()
     val currentLanguage = getCurrentLanguage()
 
-    // Cargar datos del presupuesto cuando se abre la pantalla
+
     LaunchedEffect(budgetId) {
         viewModel.loadBudget(budgetId)
     }
 
-    // Navegar de vuelta si se guardó exitosamente
+
     LaunchedEffect(uiState.updateSuccess) {
         if (uiState.updateSuccess) {
             navController.popBackStack()
@@ -96,7 +96,7 @@ fun EditBudgetScreen(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Título de la sección
+
                 Text(
                     text = if (currentLanguage == AppLanguage.SPANISH)
                         "Modifica los datos de tu presupuesto"
@@ -108,7 +108,7 @@ fun EditBudgetScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Campo: Nombre del presupuesto
+
                 OutlinedTextField(
                     value = uiState.nombre,
                     onValueChange = viewModel::onNombreChanged,
@@ -125,7 +125,7 @@ fun EditBudgetScreen(
                     shape = RoundedCornerShape(12.dp)
                 )
 
-                // Campo: Monto planeado
+
                 OutlinedTextField(
                     value = uiState.montoPlaneado,
                     onValueChange = viewModel::onMontoPlaneadoChanged,
@@ -151,7 +151,7 @@ fun EditBudgetScreen(
                     }
                 )
 
-                // ⚠️ Advertencia si el nuevo monto es menor al gastado
+
                 if (uiState.montoGastado > 0 && uiState.montoPlaneado.toDoubleOrNull() != null) {
                     val nuevoMonto = uiState.montoPlaneado.toDouble()
                     if (nuevoMonto < uiState.montoGastado) {

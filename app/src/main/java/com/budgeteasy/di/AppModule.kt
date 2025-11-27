@@ -14,9 +14,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    // ========================================
-    // PREFERENCES MANAGERS
-    // ========================================
 
     @Provides
     @Singleton

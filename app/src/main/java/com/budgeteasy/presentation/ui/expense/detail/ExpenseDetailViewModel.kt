@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-// Definimos los eventos que la UI necesita manejar
+
 sealed class ExpenseDetailEvent {
     data class ShowMessage(val message: String) : ExpenseDetailEvent()
 }
@@ -27,11 +27,10 @@ class ExpenseDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    // Variables de navegación (usando el método que ya tenías)
     private val expenseId: Int = savedStateHandle.get<Int>("expenseId") ?: 0
     private val budgetId: Int = savedStateHandle.get<Int>("budgetId") ?: 0
 
-    // --- ESTADOS DE CARGA Y DATOS ---
+
     private val _expense = MutableStateFlow<Expense?>(null)
     val expense: StateFlow<Expense?> = _expense.asStateFlow()
 
@@ -47,7 +46,7 @@ class ExpenseDetailViewModel @Inject constructor(
     private val _deleteSuccess = MutableStateFlow(false)
     val deleteSuccess: StateFlow<Boolean> = _deleteSuccess.asStateFlow()
 
-    // --- ESTADOS DE EDICIÓN Y LÓGICA DE CAMBIOS (AÑADIDOS) ---
+
     private val _expenseName = MutableStateFlow("")
     val expenseName: StateFlow<String> = _expenseName.asStateFlow()
 
@@ -66,20 +65,20 @@ class ExpenseDetailViewModel @Inject constructor(
     private val _isUpdateLoading = MutableStateFlow(false)
     val isUpdateLoading: StateFlow<Boolean> = _isUpdateLoading.asStateFlow()
 
-    // Control de diálogos de navegación
+
     private val _showUnsavedChangesDialog = MutableStateFlow(false)
     val showUnsavedChangesDialog: StateFlow<Boolean> = _showUnsavedChangesDialog.asStateFlow()
 
-    // Canal para la comunicación de eventos a la UI (Snackbar, etc.)
+
     private val _eventFlow = MutableSharedFlow<ExpenseDetailEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    // Monto original para calcular la diferencia durante la actualización
+
     private var originalMonto: Double = 0.0
 
     init {
         loadExpense()
-        observeEdits() // Inicia la detección de cambios
+        observeEdits()
     }
 
     private fun loadExpense() {
@@ -92,13 +91,13 @@ class ExpenseDetailViewModel @Inject constructor(
             try {
                 _isLoading.value = true
 
-                // Usamos GetExpensesUseCase (asumiendo que devuelve un Flow)
+
                 getExpensesUseCase(budgetId).collect { expenses ->
                     val expenseResult = expenses.find { it.id == expenseId }
 
                     if (expenseResult != null) {
                         _expense.value = expenseResult
-                        // Inicializa los campos de edición
+
                         _expenseName.value = expenseResult.nombre
                         _expenseMonto.value = String.format("%.2f", expenseResult.monto)
                         _expenseCategory.value = expenseResult.categoria
@@ -117,14 +116,14 @@ class ExpenseDetailViewModel @Inject constructor(
         }
     }
 
-    // --- HANDLERS DE EDICIÓN ---
+
 
     fun onNameChange(name: String) {
         _expenseName.value = name
     }
 
     fun onMontoChange(monto: String) {
-        // Simple validación para asegurar que solo se ingresen números y un punto decimal
+
         _expenseMonto.value = monto.replace(Regex("[^0-9.]"), "")
     }
 
@@ -140,7 +139,7 @@ class ExpenseDetailViewModel @Inject constructor(
         _error.value = null
     }
 
-    // --- LÓGICA DE DETECCIÓN DE CAMBIOS ---
+
 
     private fun observeEdits() {
         combine(
@@ -149,7 +148,7 @@ class ExpenseDetailViewModel @Inject constructor(
 
             if (originalExpense == null) return@combine false
 
-            // Comparamos el monto como string formateado, que es lo que ve el usuario.
+
             val originalMontoStr = String.format("%.2f", originalExpense.monto)
 
             // Compara cada campo con el valor original
@@ -164,7 +163,7 @@ class ExpenseDetailViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    // --- ACCIONES PRINCIPALES ---
+
 
     fun updateExpense() {
         if (!_isModified.value) {
@@ -194,19 +193,19 @@ class ExpenseDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _isUpdateLoading.value = true
             try {
-                // 1. Crear el gasto actualizado
+
                 val updatedExpense = original.copy(
                     nombre = _expenseName.value,
                     monto = montoNuevo,
                     categoria = _expenseCategory.value,
                     nota = _expenseNota.value,
-                    // La fecha y el ID se mantienen
+
                 )
 
-                // 2. Calcular la diferencia (Ajuste = Nuevo monto - Monto Original)
+
                 val montoAdjustment = montoNuevo - originalMonto
 
-                // 3. Ejecutar el caso de uso transaccional
+
                 val success = updateExpenseUseCase(
                     updatedExpense = updatedExpense,
                     budgetId = budgetId,
@@ -214,7 +213,7 @@ class ExpenseDetailViewModel @Inject constructor(
                 )
 
                 if (success) {
-                    // Actualizar el estado local (para la próxima edición)
+
                     _expense.value = updatedExpense
                     originalMonto = montoNuevo
                     _isModified.value = false
@@ -237,7 +236,7 @@ class ExpenseDetailViewModel @Inject constructor(
             try {
                 _isDeleting.value = true
 
-                // LLAMA al UseCase con el ID (asumiendo que tu UseCase requiere solo el ID)
+
                 val wasDeleted = deleteExpenseUseCase(expenseToDelete.id)
 
                 if (wasDeleted) {
@@ -254,19 +253,15 @@ class ExpenseDetailViewModel @Inject constructor(
         }
     }
 
-    // --- LÓGICA DE NAVEGACIÓN HACIA ATRÁS ---
 
-    /**
-     * Maneja la navegación hacia atrás, mostrando un diálogo si hay cambios sin guardar.
-     * @param navigateBack La acción de navegación real (generalmente navController.popBackStack()).
-     */
+
+
     fun handleBackNavigation(navigateBack: () -> Unit) {
         if (_isModified.value) {
-            // Guardamos la acción de navegación para ejecutarla después de la confirmación
-            // NOTA: Usamos el estado del diálogo, no una variable auxiliar, para ser más directo.
+
             _showUnsavedChangesDialog.value = true
         } else {
-            // No hay cambios, navegamos directamente
+
             navigateBack()
         }
     }
@@ -274,7 +269,7 @@ class ExpenseDetailViewModel @Inject constructor(
     fun confirmDiscard(navigateBack: () -> Unit) {
         // Descartar cambios y navegar
         _showUnsavedChangesDialog.value = false
-        // Llama a la acción de navegación que se pasó
+
         navigateBack()
     }
 

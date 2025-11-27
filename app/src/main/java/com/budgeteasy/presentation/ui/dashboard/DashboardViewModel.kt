@@ -34,11 +34,11 @@ class DashboardViewModel @Inject constructor(
     private val _user = MutableStateFlow<User?>(null)
     val user: StateFlow<User?> = _user
 
-    // Presupuesto actualmente seleccionado (destacado)
+
     private val _selectedBudget = MutableStateFlow<Budget?>(null)
     val selectedBudget: StateFlow<Budget?> = _selectedBudget
 
-    // Lista de todos los presupuestos
+
     private val _allBudgets = MutableStateFlow<List<Budget>>(emptyList())
     val allBudgets: StateFlow<List<Budget>> = _allBudgets
 
@@ -47,7 +47,7 @@ class DashboardViewModel @Inject constructor(
     }
 
     private fun loadDashboard() {
-        // Cargar usuario
+
         viewModelScope.launch {
             try {
                 _uiState.value = DashboardUiState.Loading
@@ -58,28 +58,28 @@ class DashboardViewModel @Inject constructor(
             }
         }
 
-        // Cargar presupuestos
+
         viewModelScope.launch {
             try {
                 getBudgetsUseCase(userId).collect { budgets ->
                     _allBudgets.value = budgets
                     _uiState.value = DashboardUiState.Success(budgets)
 
-                    // ✅ ACTUALIZAR el presupuesto seleccionado con datos frescos
+
                     val currentSelectedId = _selectedBudget.value?.id
 
                     if (currentSelectedId != null) {
-                        // Ya hay uno seleccionado: buscar su versión actualizada
+
                         val updatedBudget = budgets.find { it.id == currentSelectedId }
                         if (updatedBudget != null) {
                             _selectedBudget.value = updatedBudget
                             loadExpensesForBudget(updatedBudget.id)
                         } else {
-                            // El presupuesto fue eliminado, seleccionar otro
+
                             selectDefaultBudget(budgets)
                         }
                     } else {
-                        // Primera vez: seleccionar el de mayor monto
+
                         selectDefaultBudget(budgets)
                     }
                 }
@@ -89,7 +89,7 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    // Seleccionar presupuesto por defecto (el de mayor monto planeado)
+
     private fun selectDefaultBudget(budgets: List<Budget>) {
         if (budgets.isNotEmpty()) {
             val mainBudget = budgets.maxByOrNull { it.montoPlaneado }
@@ -98,7 +98,7 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    // Función para cargar gastos de un presupuesto específico
+
     private fun loadExpensesForBudget(budgetId: Int) {
         viewModelScope.launch {
             try {
@@ -112,13 +112,13 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    // Función para cambiar el presupuesto seleccionado manualmente
+
     fun selectBudget(budget: Budget) {
         _selectedBudget.value = budget
         loadExpensesForBudget(budget.id)
     }
 
-    // Refresca todo el dashboard
+
     fun refreshDashboard() {
         loadDashboard()
     }

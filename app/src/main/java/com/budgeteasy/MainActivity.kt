@@ -52,16 +52,16 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun attachBaseContext(newBase: Context) {
-        // Aplicar idioma guardado al iniciar la app
+
         val languageManager = LanguageManager(newBase)
 
-        // Leer idioma guardado de forma segura (sin bloquear indefinidamente)
+
         val savedLanguage = runBlocking {
             try {
-                languageManager.appLanguage.first() // obtiene solo el primer valor
+                languageManager.appLanguage.first()
             } catch (e: Exception) {
                 e.printStackTrace()
-                AppLanguage.SPANISH // idioma por defecto
+                AppLanguage.SPANISH
             }
         }
 

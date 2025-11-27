@@ -91,14 +91,14 @@ fun ProfileScreen(
                 }
             }
 
-            // Información del perfil
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // ✅ Título traducible
+
                 Text(
                     text = stringResource(R.string.personal_info),
                     style = MaterialTheme.typography.titleMedium,
@@ -107,14 +107,14 @@ fun ProfileScreen(
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
 
-                // ✅ Nombre completo traducible
+
                 ProfileInfoCard(
                     icon = Icons.Default.Person,
                     title = stringResource(R.string.full_name),
                     value = "${user?.nombre ?: ""} ${user?.apellidos ?: ""}"
                 )
 
-                // ✅ Email traducible
+
                 ProfileInfoCard(
                     icon = Icons.Default.Email,
                     title = stringResource(R.string.email),
@@ -123,7 +123,7 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // ✅ Botón Configuración traducible
+
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()

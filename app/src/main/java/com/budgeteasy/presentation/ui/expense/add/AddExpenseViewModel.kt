@@ -14,7 +14,7 @@ data class AddExpenseUiState(
     val nombre: String = "",
     val monto: String = "",
     val nota: String = "",
-    val categoria: String = "Otros", // 👈 NUEVO: categoría por defecto
+    val categoria: String = "Otros",
     val fecha: Long = System.currentTimeMillis(),
     val isLoading: Boolean = false,
     val errorMessage: String? = null,

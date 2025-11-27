@@ -43,7 +43,7 @@ fun CreateBudgetScreen(
     val uiState by viewModel.uiState.collectAsState()
     var expandedPeriodo by remember { mutableStateOf(false) }
 
-    // ✅ Periodos traducibles
+
     val periodos = listOf(
         stringResource(R.string.period_1_month),
         stringResource(R.string.period_3_months),
@@ -60,7 +60,7 @@ fun CreateBudgetScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        // ✅ Título traducible
+
         Text(
             text = stringResource(R.string.create_budget),
             style = MaterialTheme.typography.displaySmall,
@@ -68,7 +68,7 @@ fun CreateBudgetScreen(
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        // ✅ Nombre TextField traducible
+
         TextField(
             value = uiState.nombre,
             onValueChange = { viewModel.onNombreChanged(it) },
@@ -79,7 +79,7 @@ fun CreateBudgetScreen(
             singleLine = true
         )
 
-        // ✅ Monto Planeado TextField traducible
+
         TextField(
             value = uiState.montoPlaneado,
             onValueChange = { viewModel.onMontoPlaneadoChanged(it) },
@@ -90,7 +90,7 @@ fun CreateBudgetScreen(
             singleLine = true
         )
 
-        // ✅ Periodo Dropdown traducible
+
         Button(
             onClick = { expandedPeriodo = !expandedPeriodo },
             modifier = Modifier
@@ -118,7 +118,7 @@ fun CreateBudgetScreen(
             }
         }
 
-        // ✅ Descripción TextField traducible
+
         TextField(
             value = uiState.descripcion,
             onValueChange = { viewModel.onDescripcionChanged(it) },
@@ -129,7 +129,7 @@ fun CreateBudgetScreen(
             singleLine = true
         )
 
-        // Error message
+
         if (uiState.errorMessage != null) {
             Text(
                 text = uiState.errorMessage ?: "",
@@ -139,7 +139,7 @@ fun CreateBudgetScreen(
             )
         }
 
-        // ✅ Create Button traducible
+
         Button(
             onClick = { viewModel.createBudget(userId) },
             modifier = Modifier
@@ -160,7 +160,7 @@ fun CreateBudgetScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // ✅ Back Button traducible
+
         Button(
             onClick = { navController.popBackStack() },
             modifier = Modifier
@@ -172,7 +172,7 @@ fun CreateBudgetScreen(
         }
     }
 
-    // Handle create success
+
     if (uiState.isCreateSuccessful) {
         LaunchedEffect(Unit) {
             navController.popBackStack()

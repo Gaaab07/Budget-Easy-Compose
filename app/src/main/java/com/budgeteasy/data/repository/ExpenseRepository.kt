@@ -13,25 +13,25 @@ import javax.inject.Inject
 
 class ExpenseRepository @Inject constructor(
     private val expenseDao: ExpenseDao,
-    private val budgetDao: BudgetDao, // 👈 AÑADIDO
-    private val database: BudgetDatabase // 👈 AÑADIDO (Nombre de tu base de datos)
+    private val budgetDao: BudgetDao,
+    private val database: BudgetDatabase
 ) : IExpenseRepository {
 
     override suspend fun getExpenseByIdSingle(expenseId: Int): Expense? {
-        // Asumo que tu ExpenseDao ya tiene un método para obtener una entidad por ID de forma síncrona
+
         return expenseDao.getExpenseById(expenseId)?.toModel()
     }
 
-    // 2. Implementación Transaccional de Modificación (Update)
+
     override suspend fun updateExpenseAndBudgetBalance(
         updatedExpense: Expense,
         budgetId: Int,
-        montoAdjustment: Double // Esta es la diferencia neta (New - Old)
+        montoAdjustment: Double
     ): Boolean = try {
         database.withTransaction {
             expenseDao.updateExpense(updatedExpense.toEntity())
 
-            // 🚨 CAMBIO AQUÍ: Llamamos a la función con '+' en el DAO
+
             budgetDao.adjustMontoGastado(budgetId, montoAdjustment)
         }
         true
@@ -99,10 +99,10 @@ class ExpenseRepository @Inject constructor(
         }
     }
 
-    // 🆕 NUEVO: Gastos recientes de UN presupuesto específico
+
     override fun getRecentExpensesByBudget(budgetId: Int, limit: Int): Flow<List<Expense>> {
         return expenseDao.getRecentExpensesByBudget(budgetId, limit).map { entities ->
-            entities.map { it.toModel() }  // ✅ CORREGIDO: toModel() en vez de toDomain()
+            entities.map { it.toModel() }
         }
     }
 
